@@ -12,7 +12,7 @@ USE [CovidHurtowniaDanych];
 GO
 
 CREATE TABLE [dbo].[FaktTempoWirusa](
-	[KG_Tempo] [int] IDENTITY(1,1) NOT NULL,
+	[TempoKlucz] [int] IDENTITY(1,1) NOT NULL,
 	[Liczba zakazen ogolem] [int] NOT NULL,
 	[Liczba zgonow ogolem] [int] NOT NULL,
 	[Liczba wyleczonych ogolem] [int] NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE [dbo].[FaktTempoWirusa](
 GO
 
 CREATE TABLE [dbo].[WymiarCzas](
-	[KG_Data] [int] IDENTITY(1,1) NOT NULL,
+	[DataKlucz] [int] IDENTITY(1,1) NOT NULL,
 	[Dzien] [tinyint] NOT NULL,
 	[Miesiac] [tinyint] NOT NULL,
 	[Rok] [int] NOT NULL
@@ -32,7 +32,7 @@ CREATE TABLE [dbo].[WymiarCzas](
 GO
 
 CREATE TABLE [dbo].[WymiarGeografia](
-	[KG_Geografia] [int] IDENTITY(1,1) NOT NULL,
+	[GeografiaKlucz] [int] IDENTITY(1,1) NOT NULL,
 	[Kontynent] [nvarchar](50) NOT NULL,
 	[Kraj] [nvarchar](50) NOT NULL,
 	[Populacja] [int],
@@ -41,7 +41,7 @@ CREATE TABLE [dbo].[WymiarGeografia](
 GO
 
 CREATE TABLE [dbo].[WymiarPacjent](
-	[KG_Pacjent] [int] IDENTITY(1,1) NOT NULL,
+	[PacjentKlucz] [int] IDENTITY(1,1) NOT NULL,
 	[Wiek] [int] NOT NULL,
 	[Plec] [int] NOT NULL,
 	[Stan] [nvarchar](50) NOT NULL,
