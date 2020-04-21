@@ -11,10 +11,27 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Init_ETL"
   DTS:PackageType="5"
-  DTS:VersionBuild="1"
-  DTS:VersionGUID="{8804C5BE-7B0C-4B05-922A-88BDD0A2E9F8}">
+  DTS:VersionBuild="8"
+  DTS:VersionGUID="{D98FCF4B-D89C-4C7B-B4BF-0B9D60BA1DFD}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[hurtowniadanychcovid.database.windows.net.Joberooo]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{B54643F8-E78A-4F98-97C9-AE10E6A5FA06}"
+      DTS:ObjectName="hurtowniadanychcovid.database.windows.net.Joberooo">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=hurtowniadanychcovid.database.windows.net;User ID=Joberooo;Initial Catalog=CovidHurtowniaDanych;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWXbYsLkMsEyGiCVER+aGnQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADz7JHOt9AfP2f8eMxUMuMeqZwISwRYGSMCOSgbqC32hQAAAAAOgAAAAAIAACAAAAAwwRXFEgQrWHa2dSjM3DSKxtXEOD2tb9t5iD0xp7HLSSAAAAALHzie555TOO+S7Ms1Gr/u7isURMHfR0dXnb4eah6MJ0AAAACROV3bMTuqvWGc3Iyg7GUGgj06mnpbYhBBiOKHfhyfyZC1jEbInaop3HxwD59ra8u2QVPCHGjBJbaXAJmxntHg</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
   <DTS:Variables />
   <DTS:Executables />
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
