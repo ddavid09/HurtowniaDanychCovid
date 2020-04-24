@@ -1,0 +1,1 @@
+pyinstaller --onefile --hidden-import=pandas._libs.tslib --hidden-import=pkg_resources.py2_warn PythonImport.py

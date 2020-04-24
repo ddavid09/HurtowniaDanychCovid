@@ -1,6 +1,6 @@
 from glob import glob
 from urllib.request import urlopen
-import pandas as pd
+from pandas import pandas as pd
 
 daty = []
 dni = []
