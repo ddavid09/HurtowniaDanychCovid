@@ -48,10 +48,10 @@ pierwszy = 0
 
 def rodzajZapisu(df, p):
     if p == 0:
-        df.to_csv('file_name.csv', mode='a', header=True)
+        df.to_csv('InitialDataCOVID-19.csv', mode='a', header=True)
         p = 1
     else:
-        df.to_csv('file_name.csv', mode='a', header=False)
+        df.to_csv('InitialDataCOVID-19.csv', mode='a', header=False)
     return p
 
 def rodzajOdczytu(url, d, m, r):
