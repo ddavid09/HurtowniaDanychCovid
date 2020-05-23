@@ -45,8 +45,8 @@ GO
 CREATE TABLE [dbo].[GEOGRAFIA_DIM]
 (
 	[GEOGRAFIA_ID] [int] IDENTITY(1,1) NOT NULL,
-	[KONTYNENT] [nvarchar](50) NOT NULL,
-	[KRAJ] [nvarchar](50) NOT NULL,
+	[KONTYNENT] [nvarchar](50) NULL,
+	[KRAJ] [nvarchar](50) NULL,
 	[POPULACJA] [int] NULL,
 	[PKB] [int] NULL
 )

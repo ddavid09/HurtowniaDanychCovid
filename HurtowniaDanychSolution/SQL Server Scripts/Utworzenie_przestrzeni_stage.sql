@@ -1,3 +1,7 @@
+--*********************************************************************
+--nieuzywne - zastapione przez procedure skladowana utworz_tabele_stage
+--*********************************************************************
+
 USE [CovidHurtowniaDanych]
 GO
 
