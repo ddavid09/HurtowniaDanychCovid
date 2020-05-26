@@ -19,38 +19,52 @@ ALTER TABLE #process_deaths_table DROP COLUMN [Province/State]
 ALTER TABLE #process_deaths_table DROP COLUMN [Lat]
 ALTER TABLE #process_deaths_table DROP COLUMN [Long]
 
---zagregowane przypadki CONFIRMED|RECOVERED|DEATHS wg krajow dla zadanej daty
-DROP TABLE IF EXISTS #process_fact
+--**********************************************************************************************************************
+--zagregowane przypadki CONFIRMED|RECOVERED|DEATHS wg krajow dla zadanej daty z policzeniem zainfekowanych na dany dzien
+--**********************************************************************************************************************
 
-SELECT
+DECLARE @date nvarchar(10)
+SET @date = '2020-05-23'
+
+DECLARE @sqlText nvarchar(max)
+SET @sqlText =
+N'DROP TABLE IF EXISTS ##process_fact
+SELECT '''
++ @date + ''' AS [DATE],
 C.[Country/Region],
 CONFIRMED,
 DEATHS,
-RECOVERED
-INTO #process_fact
+RECOVERED,
+(CONFIRMED - (DEATHS + RECOVERED)) AS INFECTED_ON_THAT_DAY
+INTO ##process_fact
 FROM
 (SELECT 
 [Country/Region],
-SUM([2020-05-23]) AS CONFIRMED
+SUM([' + @date + ']) AS CONFIRMED
 FROM #process_confirmed_table
 GROUP BY [Country/Region]) AS C
 INNER JOIN 
 (SELECT 
 [Country/Region],
-SUM([2020-05-23]) AS RECOVERED
+SUM([' + @date + ']) AS RECOVERED
 FROM #process_recovered_table
 GROUP BY [Country/Region]) AS R
 ON C.[Country/Region] = R.[Country/Region]
 INNER JOIN
 (SELECT 
 [Country/Region],
-SUM([2020-05-23]) AS DEATHS
+SUM([' + @date + ']) AS DEATHS
 FROM #process_deaths_table
 GROUP BY [Country/Region]) AS D
 ON C.[Country/Region] = D.[Country/Region]
-ORDER BY CONFIRMED DESC
+ORDER BY CONFIRMED DESC;'
 
---stage dla tabeli faktow
+EXEC sp_executesql @sqlText;
+SELECT * FROM ##process_fact
+
+--******************************
+--Utworzenie STAGE tabeli faktow 
+--******************************
 
 DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
 
@@ -68,13 +82,9 @@ CREATE TABLE [dbo].[stage_tempo_fact]
 	[NUMER_KOLEJNY_DNIA] [int] NULL
 )
 
---czesciowe zaladowanie stage w celu latwiejszego policzenia nowych przypadkow i dynamiki
---miary
---liczba zakazonych na dany dzien
-ALTER TABLE #process_fact ADD INFECTED_ON_THAT_DAY AS (CONFIRMED - (DEATHS + RECOVERED))
-ALTER TABLE #process_fact ADD [DATE] AS '2020-05-23'
-SELECT * FROM #process_fact
---**************************************************************************************
+--***************************************************
+--zasilenie STAGE tabeli faktow niekompletnymi danymi
+--***************************************************
 
 INSERT INTO stage_tempo_fact
 (CZAS_ID, GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS)
@@ -85,22 +95,22 @@ ISNULL(P.CONFIRMED, 0),
 ISNULL(P.DEATHS, 0),
 ISNULL(P.RECOVERED, 0),
 ISNULL(P.INFECTED_ON_THAT_DAY, 0)
-FROM #process_fact AS P
+FROM ##process_fact AS P
 INNER JOIN CZAS_DIM AS C ON P.[DATE] = C.[DATA]
 INNER JOIN GEOGRAFIA_DIM AS G ON P.[Country/Region] = G.KRAJ
 
 SELECT * FROM stage_tempo_fact
 
-
-
-
---liczba nowych przypadkow
+--**********************************************************************************
+--Uzupelnienie o dane z o nowych przypadkach na podstawie danych z dnia poprzedniego
+--**********************************************************************************
 
 DROP TABLE IF EXISTS #process_fact1
 
-SELECT P.*, DB.LICZBA_ZAKAZENI_OGOLEM AS CONFIRMED_DAY_BEFORE
+SELECT P.*,
+DB.LICZBA_ZAKAZENI_OGOLEM AS CONFIRMED_DAY_BEFORE
 INTO #process_fact1
-FROM #process_fact AS P
+FROM ##process_fact AS P
 INNER JOIN
 (SELECT K.KRAJ ,F.LICZBA_ZAKAZENI_OGOLEM FROM stage_tempo_fact AS F
 INNER JOIN GEOGRAFIA_DIM AS K ON F.GEOGRAFIA_ID = K.GEOGRAFIA_ID
@@ -112,12 +122,6 @@ ALTER TABLE #process_fact1 ADD NEW_INFECTED AS (CONFIRMED-CONFIRMED_DAY_BEFORE)
 
 SELECT * FROM #process_fact1
 
---Utworzenie tymczasowej tabeli faktow
-DROP TABLE IF EXISTS #fact_tempo
-SELECT * INTO #fact_tempo FROM dbo.TEMPO_WIRUSA_SUM WHERE 1 = 0
-
---data jako parametr procedury i procedura przechodzi po kazdym wierszu tabeli zagregowanej
-SELECT * FROM #fact_tempo
 
 
 
