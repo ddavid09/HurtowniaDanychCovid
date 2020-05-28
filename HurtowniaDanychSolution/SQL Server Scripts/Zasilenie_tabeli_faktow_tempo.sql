@@ -23,8 +23,8 @@ ALTER TABLE #process_deaths_table DROP COLUMN [Long]
 --zagregowane przypadki CONFIRMED|RECOVERED|DEATHS wg krajow dla zadanej daty z policzeniem zainfekowanych na dany dzien
 --**********************************************************************************************************************
 
-DECLARE @date nvarchar(10)
-SET @date = '2020-05-23'
+DECLARE @date nvarchar(10);
+SET @date = '2020-05-23';
 
 DECLARE @sqlText nvarchar(max)
 SET @sqlText =
@@ -122,8 +122,86 @@ ALTER TABLE #process_fact1 ADD NEW_INFECTED AS (CONFIRMED-CONFIRMED_DAY_BEFORE)
 
 SELECT * FROM #process_fact1
 
+--ETL init START
+--czesciowe zasilenie tabeli faktow dla wszystkich kolumn
+
+DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
+
+CREATE TABLE [dbo].[stage_tempo_fact]
+(
+	[FAKT_ID] [int] IDENTITY(1,1) NOT NULL,
+	[CZAS_ID] [int] NULL,
+	[GEOGRAFIA_ID] [int] NULL,
+	[LICZBA_ZAKAZENI_OGOLEM] [int] NULL,
+	[LICZBA_ZGONOW_OGOLEM] [int] NULL,
+	[LICZBA_WYLECZONYCH_OGOLEM] [int] NULL,
+	[LICZBA_NOWYCH_ZAKAZEN_DZIS] [int] NULL,
+	[LICZBA_ZAKAZONYCH_NA_DZIS] [int] NULL,
+	[DYNAMIKA_ZAKAZEN] [float] NULL,
+	[NUMER_KOLEJNY_DNIA] [int] NULL
+)
+
+--Petla po wszystkich kolumnach stage
+--Ustalenie liczby kolumn tabeli
+DECLARE @numOfCols int;
+
+SELECT @numOfCols = COUNT(COLUMN_NAME)
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_CATALOG = 'CovidHurtowniaDanych' AND TABLE_SCHEMA = 'dbo'
+AND TABLE_NAME = 'csse_covid_19_time_series_confirmed_stage'   
+
+SET @numOfCols=@numOfCols-4;
+DECLARE @startDate DATE = '2020-01-22'
+
+WHILE @numOfCols > 0
+BEGIN
+	EXEC dbo.zasil_tempo_stage_confirmed_recovered_deaths_onthatday @data = @startDate
+	SET @startDate = DATEADD(day, 1, @startDate)
+	SET @numOfCols = @numOfCols-1;
+END
+
+SELECT * FROM [dbo].stage_tempo_fact
+
+--Nadanie numeru kolejnego dnia zakazenia 
+--przejscie po kazdej geografi
+
+DECLARE @i int = 0;
+DECLARE @numOfGeo int
+
+SELECT @numOfGeo = COUNT(DISTINCT GEOGRAFIA_ID)
+FROM [dbo].stage_tempo_fact
+
+--odnalezienie pierwszego dnia zakazenia w danej geografii
+DECLARE @GeoId int = 67;
+DECLARE @casesFirstDay int;
+DECLARE @RowToUpdateID int;
+
+SELECT @casesFirstDay = MIN(LICZBA_ZAKAZENI_OGOLEM) 
+FROM [dbo].stage_tempo_fact
+WHERE GEOGRAFIA_ID = @GeoId AND
+LICZBA_ZAKAZENI_OGOLEM > 0;
+
+SELECT @RowToUpdateID = FAKT_ID
+FROM [dbo].stage_tempo_fact f
+INNER JOIN CZAS_DIM c ON f.CZAS_ID = c.CZAS_ID
+WHERE GEOGRAFIA_ID = @GeoId AND
+LICZBA_ZAKAZENI_OGOLEM = @casesFirstDay
+ORDER BY [DATA]
+
+PRINT @RowToUpdateID
+
+SELECT gd.KRAJ, cd.[DATA], sf.* FROM [dbo].stage_tempo_fact sf
+INNER JOIN GEOGRAFIA_DIM gd ON sf.GEOGRAFIA_ID = gd.GEOGRAFIA_ID
+INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+WHERE  FAKT_ID = @RowToUpdateID
+
+--^^Uzyskanie id faktu pierwszego zakazenia w zadanej parametrem geografii
+--TODO Update tego wiersza, i dla ka?dego z kolejn? dat? a? do ko?ca update numeru kolejnego dnia 
 
 
+SELECT FAKT_ID, sf.GEOGRAFIA_ID FROM [dbo].stage_tempo_fact sf
+INNER JOIN GEOGRAFIA_DIM gd ON sf.GEOGRAFIA_ID = gd.GEOGRAFIA_ID
+WHERE KRAJ = 'Germany'
 
 
 
