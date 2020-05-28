@@ -31,6 +31,12 @@
           <AssociatedConnUserName />
           <FullPath>Utworzenie_modelu_skrypt.sql</FullPath>
         </FileNode>
+        <FileNode Name="Utworzenie_procedury_czesciowego_zasilenia_tempo_stage.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>Utworzenie_procedury_czesciowego_zasilenia_tempo_stage.sql</FullPath>
+        </FileNode>
         <FileNode Name="Utworzenie_procedury_skladowanej_do_tworzenia_tabel_stage.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
@@ -42,6 +48,12 @@
           <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>Utworzenie_przestrzeni_stage.sql</FullPath>
+        </FileNode>
+        <FileNode Name="Workarea.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>Workarea.sql</FullPath>
         </FileNode>
         <FileNode Name="Zasilenie_tabeli_faktow_tempo.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
