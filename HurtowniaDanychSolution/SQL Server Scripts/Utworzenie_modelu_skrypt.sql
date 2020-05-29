@@ -231,23 +231,15 @@ SET @date = @data;
 DECLARE @sqlText nvarchar(max)
 SET @sqlText =
 N'INSERT INTO stage_tempo_fact
-(CZAS_ID, GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS, NUMER_KOLEJNY_DNIA)
-SELECT 
-ISNULL(C.CZAS_ID, 0),
-ISNULL(G.GEOGRAFIA_ID, 0),
-ISNULL(P.CONFIRMED, 0),
-ISNULL(P.DEATHS, 0),
-ISNULL(P.RECOVERED, 0),
-ISNULL(P.INFECTED_ON_THAT_DAY, 0),
-NUMER_KOLEJNY_DNIA = 0
-FROM 
-(SELECT
-'''+ @date + ''' AS [DATE],
+(CZAS, GEOGRAFIA, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS, NUMER_KOLEJNY_DNIA)
+SELECT
+'''+ @date + ''',
 C.[Country/Region],
 CONFIRMED,
 DEATHS,
 RECOVERED,
-(CONFIRMED - (DEATHS + RECOVERED)) AS INFECTED_ON_THAT_DAY
+(CONFIRMED - (DEATHS + RECOVERED)) AS INFECTED_ON_THAT_DAY,
+0,
 FROM
 (SELECT 
 [Country/Region],
@@ -267,11 +259,15 @@ INNER JOIN
 SUM([' + @date + ']) AS DEATHS
 FROM csse_covid_19_time_series_deaths_stage
 GROUP BY [Country/Region]) AS D
-ON C.[Country/Region] = D.[Country/Region]) AS P
-INNER JOIN CZAS_DIM AS C ON P.[DATE] = C.[DATA]
-INNER JOIN GEOGRAFIA_DIM AS G ON P.[Country/Region] = G.KRAJ;'
+ON C.[Country/Region] = D.[Country/Region]) AS P'
 
-EXEC sp_executesql @sqlText;
+BEGIN TRY  
+    EXEC sp_executesql @sqlText;  
+	PRINT 'DANE PODSTAWOWE DLA DNIA: ' + @date + ' ZA?ADOWANE'
+END TRY  
+BEGIN CATCH  
+    PRINT 'BRAK PODSTAWOWYCH Z DNIA: ' + @date
+END CATCH; 
 GO
 
 --**************************************************************************************************************************************************

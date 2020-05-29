@@ -1,110 +1,50 @@
---*******************************************************
---ETL init START
+--********************************************************
+--ETL init 
+--********************************************************
 --czesciowe zasilenie tabeli faktow dla wszystkich kolumn
 --********************************************************
+USE CovidHurtowniaDanych
+GO
 
-DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
+DECLARE @startDate DATE
+DECLARE @todayDate DATE = GETDATE()
 
-CREATE TABLE [dbo].[stage_tempo_fact]
-(
-	[FAKT_ID] [int] IDENTITY(1,1) NOT NULL,
-	[CZAS_ID] [int] NULL,
-	[GEOGRAFIA_ID] [int] NULL,
-	[LICZBA_ZAKAZENI_OGOLEM] [int] NULL,
-	[LICZBA_ZGONOW_OGOLEM] [int] NULL,
-	[LICZBA_WYLECZONYCH_OGOLEM] [int] NULL,
-	[LICZBA_NOWYCH_ZAKAZEN_DZIS] [int] NULL,
-	[LICZBA_ZAKAZONYCH_NA_DZIS] [int] NULL,
-	[DYNAMIKA_ZAKAZEN] [float] NULL,
-	[NUMER_KOLEJNY_DNIA] [int] NULL
-)
+IF (SELECT COUNT(*) FROM stage_tempo_fact) > 0
+	SELECT @startDate = MAX(CAST([CZAS] AS DATE)) FROM stage_tempo_fact 
+ELSE
+	SET @startDate = '2020-01-22'
+PRINT 'Ostanie dane w przestrzeni stage z: ' + CAST(@startDate AS varchar(50))
 
---***********************************
---Ustalenie liczby kolumn tabeli
---************************************
-DECLARE @numOfCols int;
-DECLARE @lastDate DATE;
-
-SELECT @numOfCols = COUNT(COLUMN_NAME)
-FROM INFORMATION_SCHEMA.COLUMNS 
-WHERE TABLE_CATALOG = 'CovidHurtowniaDanych' AND TABLE_SCHEMA = 'dbo'
-AND TABLE_NAME = 'csse_covid_19_time_series_confirmed_stage'   
-
-SET @numOfCols=@numOfCols-4;
-DECLARE @startDate DATE = '2020-01-22'
-SET @lastDate = DATEADD(day, @numOfCols, @startDate)
-
---****************************************************************
---Petla po wszystkich (datach) kolumnach stage
---Czesciowe zasilenie tabeli stage za pomoca procedury skladowanej
---****************************************************************
-WHILE @numOfCols > 0
+WHILE @startDate <= @todayDate
 BEGIN
 	EXEC dbo.zasil_tempo_stage_confirmed_recovered_deaths_onthatday @data = @startDate
 	SET @startDate = DATEADD(day, 1, @startDate)
-	SET @numOfCols = @numOfCols-1;
 END
+GO
 
 --***************************************
 --Nadanie numeru kolejnego dnia zakazenia 
 --przejscie po kazdej geografi
 --****************************************
-
-DECLARE @numOfGeo int
-
-SELECT @numOfGeo = COUNT(DISTINCT GEOGRAFIA_ID)
-FROM [dbo].stage_tempo_fact
-
-DECLARE @GeoId int = 0
-DECLARE @casesFirstDay int;
-DECLARE @RowToUpdateID int;
-DECLARE @dateOfFirstCase DATE;
-DECLARE @numOfDay int;
-DECLARE @cursorDate DATE;
-
-WHILE @GeoId <= @numOfGeo
-BEGIN	
-	SELECT @casesFirstDay = MIN(LICZBA_ZAKAZENI_OGOLEM) 
-	FROM [dbo].stage_tempo_fact
-	WHERE GEOGRAFIA_ID = @GeoId AND
-	LICZBA_ZAKAZENI_OGOLEM > 0;
-
-	SELECT TOP 1 @RowToUpdateID = FAKT_ID, @dateOfFirstCase = c.[DATA]
-	FROM [dbo].stage_tempo_fact f
-	INNER JOIN CZAS_DIM c ON f.CZAS_ID = c.CZAS_ID
-	WHERE GEOGRAFIA_ID = @GeoId AND
-	LICZBA_ZAKAZENI_OGOLEM = @casesFirstDay
-	ORDER BY [DATA]
-
-	UPDATE [dbo].stage_tempo_fact 
-	SET NUMER_KOLEJNY_DNIA = 1
-	WHERE FAKT_ID = @RowToUpdateID
-
-	SET @numOfDay = 2;
-	SET @cursorDate = DATEADD(day, 1, @dateOfFirstCase)
-
-	WHILE @cursorDate <= @lastDate
-		BEGIN
-			SELECT @RowToUpdateID = FAKT_ID FROM [dbo].stage_tempo_fact sf
-			INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-			WHERE sf.GEOGRAFIA_ID = @GeoId AND
-			cd.[DATA] = @cursorDate
-
-			UPDATE [dbo].stage_tempo_fact 
-			SET NUMER_KOLEJNY_DNIA = @numOfDay
-			WHERE FAKT_ID = @RowToUpdateID
-
-			SET @cursorDate = DATEADD(day, 1, @cursorDate)
-			SET @numOfDay = @numOfDay + 1
-		END
-	
-	SET @GeoId = @GeoId+1;
-END
+UPDATE sf
+SET sf.NUMER_KOLEJNY_DNIA = pt.nkd
+FROM
+stage_tempo_fact AS sf
+INNER JOIN 
+(SELECT CZAS, GEOGRAFIA, MIN(LICZBA_ZAKAZENI_OGOLEM) as lz,
+ROW_NUMBER() OVER (PARTITION BY GEOGRAFIA ORDER BY CZAS) AS nkd
+FROM stage_tempo_fact
+WHERE LICZBA_ZAKAZENI_OGOLEM > 0
+GROUP BY CZAS, GEOGRAFIA) AS pt
+ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
 GO
 
 --************************************************************************************
---Uzupelnienie liczby nowych przypadkow dla kazdego faktu (kazdego dnia w kazdym kraju
+--Uzupelnienie liczby nowych przypadkow dla kazdego faktu (kazdego dnia w kazdym kraju)
 --************************************************************************************
+
+SELECT * FROM stage_tempo_fact
+
 
 UPDATE [dbo].stage_tempo_fact
 SET 
@@ -160,3 +100,80 @@ WHILE @dateCoursor <= @maxDate
 				END
 		SET @dateCoursor = DATEADD(day, 1, @dateCoursor)
 	END
+	GO
+
+--********************************************************************
+--Uzupe?nienie dynamiki zakazen petla po kazdym nieuzupelnionym fakcie
+--********************************************************************
+
+ALTER TABLE [dbo].stage_tempo_fact 
+ALTER COLUMN DYNAMIKA_ZAKAZEN decimal(12,4)
+
+DECLARE @numOfFacts int
+DECLARE @cursor int = 0
+
+SELECT @numOfFacts = COUNT(*) FROM [dbo].stage_tempo_fact
+
+WHILE @cursor < @numOfFacts
+	BEGIN
+		DECLARE @toUpdateId int
+		DECLARE @toUpdateData DATE
+		DECLARE @toUpdateGeoId int
+
+		SELECT TOP 1
+		@toUpdateId = FAKT_ID,
+		@toUpdateData = cd.[DATA],
+		@toUpdateGeoId = GEOGRAFIA_ID
+		FROM 
+		[dbo].stage_tempo_fact sf
+		INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+		WHERE 
+		DYNAMIKA_ZAKAZEN IS NULL AND
+		[DATA] > '2020-02-22'
+
+		DECLARE @newCasesDayBefore int
+
+		SELECT @newCasesDayBefore = LICZBA_NOWYCH_ZAKAZEN_DZIS
+		FROM [dbo].stage_tempo_fact sf
+		INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+		WHERE 
+		[DATA] = DATEADD(day, -1, @toUpdateData) AND
+		GEOGRAFIA_ID = @toUpdateGeoId
+
+		IF @newCasesDayBefore > 0
+			UPDATE [dbo].stage_tempo_fact 
+			SET DYNAMIKA_ZAKAZEN = 
+			CAST(CAST(LICZBA_NOWYCH_ZAKAZEN_DZIS AS decimal(12,5))/@newCasesDayBefore AS decimal(12,4))
+			WHERE FAKT_ID = @toUpdateId
+		ELSE
+			UPDATE [dbo].stage_tempo_fact 
+			SET DYNAMIKA_ZAKAZEN = 0
+			WHERE FAKT_ID = @toUpdateId
+			SET @cursor = @cursor + 1
+	END
+
+--************************************
+--zaladowanie danych stage->tab faktow
+--************************************
+
+ALTER TABLE [dbo].TEMPO_WIRUSA_SUM
+ALTER COLUMN DYNAMIKA_ZAKAZEN decimal(12,4)
+
+SET IDENTITY_INSERT [dbo].TEMPO_WIRUSA_SUM ON
+
+INSERT INTO [dbo].TEMPO_WIRUSA_SUM
+(FAKT_ID, CZAS_ID, GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM , LICZBA_WYLECZONYCH_OGOLEM,
+LICZBA_NOWYCH_ZAKAZEN_DZIS, LICZBA_ZAKAZONYCH_NA_DZIS, DYNAMIKA_ZAKAZEN, NUMER_KOLEJNY_DNIA)
+SELECT 
+FAKT_ID, CZAS_ID, GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM,
+LICZBA_NOWYCH_ZAKAZEN_DZIS, LICZBA_ZAKAZONYCH_NA_DZIS, DYNAMIKA_ZAKAZEN, NUMER_KOLEJNY_DNIA
+FROM [dbo].stage_tempo_fact
+
+
+--************************************
+--odznaczenie daty danych 
+--fdfafds
+SELECT * FROM [dbo].stage_tempo_fact sf
+INNER JOIN GEOGRAFIA_DIM gd ON sf.GEOGRAFIA_ID = gd.GEOGRAFIA_ID
+INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+WHERE DYNAMIKA_ZAKAZEN IS NULL

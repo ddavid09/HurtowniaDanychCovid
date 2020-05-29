@@ -19,6 +19,12 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
+        <FileNode Name="drop_create_stage_tabeli_faktow.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>drop_create_stage_tabeli_faktow.sql</FullPath>
+        </FileNode>
         <FileNode Name="Utworzenie_geografia_stage_czesciowe_zaladowanie_kontynentow.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
@@ -55,11 +61,23 @@
           <AssociatedConnUserName />
           <FullPath>Workarea.sql</FullPath>
         </FileNode>
+        <FileNode Name="Zaladowanie_do_stage_numeru_kolejnego_dnia_wydajnie_nie_while.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>Zaladowanie_do_stage_numeru_kolejnego_dnia_wydajnie_nie_while.sql</FullPath>
+        </FileNode>
         <FileNode Name="Zasilenie_tabeli_faktow_tempo.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>Zasilenie_tabeli_faktow_tempo.sql</FullPath>
+        </FileNode>
+        <FileNode Name="Zasilenie_tabeli_tempo_stage_danymi_podstawowymi_(transpozycja)_param_data.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>Zasilenie_tabeli_tempo_stage_danymi_podstawowymi_(transpozycja)_param_data.sql</FullPath>
         </FileNode>
         <FileNode Name="Zasilenie_wymiaru_geografia_skrypt.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
