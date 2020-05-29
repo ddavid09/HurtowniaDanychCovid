@@ -101,3 +101,62 @@ BEGIN
 	SET @GeoId = @GeoId+1;
 END
 GO
+
+--************************************************************************************
+--Uzupelnienie liczby nowych przypadkow dla kazdego faktu (kazdego dnia w kazdym kraju
+--************************************************************************************
+
+UPDATE [dbo].stage_tempo_fact
+SET 
+	LICZBA_NOWYCH_ZAKAZEN_DZIS = LICZBA_ZAKAZONYCH_NA_DZIS,
+	DYNAMIKA_ZAKAZEN = 0
+FROM [dbo].stage_tempo_fact sf
+INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+WHERE [DATA] = '2020-01-22'
+
+DECLARE @maxDate DATE
+
+SELECT TOP 1 @maxDate = [DATA]
+FROM [dbo].stage_tempo_fact sf
+INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+ORDER BY [DATA] DESC
+
+DECLARE @dateCoursor DATE = '2020-01-23'
+
+WHILE @dateCoursor <= @maxDate
+	BEGIN
+		DECLARE @numOfFactsThisDate int
+		SELECT @numOfFactsThisDate = COUNT(*) FROM 
+		[dbo].stage_tempo_fact sf
+		INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+		WHERE [DATA] = @dateCoursor
+
+		DECLARE @factCursor int = 0;
+
+			WHILE @factCursor < @numOfFactsThisDate
+				BEGIN
+					DECLARE @idToUpdate int;
+					DECLARE @GeographyId int;
+
+					SELECT TOP 1 @idToUpdate = FAKT_ID, @GeographyId = GEOGRAFIA_ID
+					FROM [dbo].stage_tempo_fact sf
+					INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+					WHERE [DATA] = @dateCoursor AND
+					LICZBA_NOWYCH_ZAKAZEN_DZIS IS NULL
+
+					DECLARE @ConfirmedDayBefore int;
+
+					SELECT @ConfirmedDayBefore = LICZBA_ZAKAZENI_OGOLEM 
+					FROM [dbo].stage_tempo_fact sf
+					INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
+					WHERE [DATA] = DATEADD(day, -1, @dateCoursor) AND
+					GEOGRAFIA_ID = @GeographyId
+
+					UPDATE [dbo].stage_tempo_fact
+					SET LICZBA_NOWYCH_ZAKAZEN_DZIS = LICZBA_ZAKAZENI_OGOLEM - @ConfirmedDayBefore
+					WHERE FAKT_ID = @idToUpdate
+
+					SET @factCursor = @factCursor + 1
+				END
+		SET @dateCoursor = DATEADD(day, 1, @dateCoursor)
+	END
