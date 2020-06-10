@@ -5,6 +5,7 @@ GO
 CREATE PROC dbo.utworz_tabele_stage
 
 @nazwa_tabeli nvarchar(200),
+@nazwa_pliku_csv nvarchar(200),
 @liczba_kolumn_daty int
 
 AS
@@ -40,4 +41,16 @@ BEGIN
 SET @startdate = DATEADD(day, 1, @startdate);
 SET @i = @i + 1;
 END
+
+DECLARE @bulkinsertsql nvarchar(max);
+
+SET @bulkinsertsql = N'
+BULK INSERT ' + @nazwa_tabeli + '
+FROM ''C:\ssis_hd_temp\' + @nazwa_pliku_csv + '''
+WITH (FIRSTROW = 2,
+    FIELDTERMINATOR = '','',
+    ROWTERMINATOR=''\n'')
+'
+
+EXEC sys.sp_executesql @bulkinsertsql
 GO

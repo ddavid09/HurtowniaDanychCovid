@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Init_ETL"
   DTS:PackageType="5"
-  DTS:VersionBuild="99"
-  DTS:VersionGUID="{B037E7F1-88C7-4211-B1E2-206CCC8B80DE}">
+  DTS:VersionBuild="102"
+  DTS:VersionGUID="{F595F080-E85B-4425-8111-4C3DEBAE0BB5}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -3315,6 +3315,26 @@
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
+      DTS:DTSID="{3FA3FC9D-5EC1-4E7F-A36F-0FD1F8EBEA60}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="confirmed_csv_file_name"
+      DTS:ReadOnly="True">
+      <DTS:VariableValue
+        DTS:DataType="8">covid_19_time_series_confirmed.csv</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{4D9B4AED-AD84-4102-89DC-37BAE5A36BDB}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="deaths_csv_file_name"
+      DTS:ReadOnly="True">
+      <DTS:VariableValue
+        DTS:DataType="8">covid_19_time_series_deaths.csv</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
       DTS:DTSID="{64489C36-CA8F-42D2-9F2F-47F5029E078F}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
@@ -3368,71 +3388,18 @@
       <DTS:VariableValue
         DTS:DataType="8">csse_covid_19_time_series_recovered_stage</DTS:VariableValue>
     </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{1E6C4C4A-6C5B-4A03-828C-B0A712D74D30}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="recovered_csv_file_name"
+      DTS:ReadOnly="True">
+      <DTS:VariableValue
+        DTS:DataType="8">covid_19_time_series_recovered.csv</DTS:VariableValue>
+    </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
-    <DTS:Executable
-      DTS:refId="Package\Bulk Insert Confirmed Stage"
-      DTS:CreationName="Microsoft.BulkInsertTask"
-      DTS:Description="Bulk Insert Task"
-      DTS:DTSID="{49FCF8D1-C765-41B2-AA12-ECD99E096823}"
-      DTS:ExecutableType="Microsoft.BulkInsertTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Bulk Insert Confirmed Stage"
-      DTS:ThreadHint="0">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <BulkInsertTask:BulkInsertTaskData
-          BulkInsertTask:CheckConstraints="False"
-          BulkInsertTask:SourceConnectionName="{52094034-BC1E-4F34-AD34-3DE8CAF4F6D4}"
-          BulkInsertTask:DestinationConnectionName="{6AAD33F7-CBD1-4381-B50D-7F63733C73F1}"
-          BulkInsertTask:DestinationTableName="[dbo].[csse_covid_19_time_series_confirmed_stage]"
-          BulkInsertTask:FirstRow="2"
-          BulkInsertTask:FieldTerminator="Comma {,}"
-          BulkInsertTask:RowTerminator="{LF}" xmlns:BulkInsertTask="www.microsoft.com/sqlserver/dts/tasks/bulkinserttask" />
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\Bulk Insert Deaths Stage"
-      DTS:CreationName="Microsoft.BulkInsertTask"
-      DTS:Description="Bulk Insert Task"
-      DTS:DTSID="{7c4aa7d2-a88d-46c1-8605-d8148d090165}"
-      DTS:ExecutableType="Microsoft.BulkInsertTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Bulk Insert Deaths Stage"
-      DTS:ThreadHint="1">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <BulkInsertTask:BulkInsertTaskData
-          BulkInsertTask:CheckConstraints="False"
-          BulkInsertTask:SourceConnectionName="{042fd9d4-599b-4dda-bc99-4abac3a8de01}"
-          BulkInsertTask:DestinationConnectionName="{6AAD33F7-CBD1-4381-B50D-7F63733C73F1}"
-          BulkInsertTask:DestinationTableName="[dbo].[csse_covid_19_time_series_deaths_stage]"
-          BulkInsertTask:FirstRow="2"
-          BulkInsertTask:FieldTerminator="Comma {,}"
-          BulkInsertTask:RowTerminator="{LF}" xmlns:BulkInsertTask="www.microsoft.com/sqlserver/dts/tasks/bulkinserttask" />
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\Bulk Insert Recovered Stage"
-      DTS:CreationName="Microsoft.BulkInsertTask"
-      DTS:Description="Bulk Insert Task"
-      DTS:DTSID="{396abf82-533a-462f-887f-77a44f5e21c7}"
-      DTS:ExecutableType="Microsoft.BulkInsertTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Bulk Insert Recovered Stage"
-      DTS:ThreadHint="2">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <BulkInsertTask:BulkInsertTaskData
-          BulkInsertTask:CheckConstraints="False"
-          BulkInsertTask:SourceConnectionName="{b44242e7-9207-47a1-8b9d-63c4f752ab40}"
-          BulkInsertTask:DestinationConnectionName="{6AAD33F7-CBD1-4381-B50D-7F63733C73F1}"
-          BulkInsertTask:DestinationTableName="[dbo].[csse_covid_19_time_series_recovered_stage]"
-          BulkInsertTask:FirstRow="2"
-          BulkInsertTask:FieldTerminator="Comma {,}"
-          BulkInsertTask:RowTerminator="{LF}" xmlns:BulkInsertTask="www.microsoft.com/sqlserver/dts/tasks/bulkinserttask" />
-      </DTS:ObjectData>
-    </DTS:Executable>
     <DTS:Executable
       DTS:refId="Package\Dane z github GET Confirmed"
       DTS:CreationName="Microsoft.ScriptTask"
@@ -3452,14 +3419,35 @@
           ReadOnlyVariables="$Package::confirmed_url"
           ReadWriteVariables="User::liczba_kolumn_confirmed">
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
+[assembly: AssemblyCopyright("Copyright @  2020")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -3870,35 +3858,14 @@ namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties {
     }
 }]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
-[assembly: AssemblyCopyright("Copyright @  2020")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -4125,36 +4092,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           ReadOnlyVariables="$Package::deaths_url"
           ReadWriteVariables="User::liczba_kolumn_deaths">
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
-[assembly: AssemblyCopyright("Copyright @  2020")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-          <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -4273,6 +4210,35 @@ using System.Runtime.CompilerServices;
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Settings.get_Default():ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Sett" +
+    "ings")]
+
+namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -4529,34 +4495,35 @@ namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
+[assembly: AssemblyCopyright("Copyright @  2020")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Settings.get_Default():ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Sett" +
-    "ings")]
-
-namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Settings.settings"
             Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
@@ -4792,36 +4759,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           ReadOnlyVariables="$Package::recovered_url"
           ReadWriteVariables="User::liczba_kolumn_recovered">
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
-[assembly: AssemblyCopyright("Copyright @  2020")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-          <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -4940,6 +4877,35 @@ using System.Runtime.CompilerServices;
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Settings.get_Default():ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Sett" +
+    "ings")]
+
+namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ST_9544b25002cb4d4988ce13f3486b890a.csproj"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -5196,34 +5162,35 @@ namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ST_38ff18b938434e01b2e5d5c4d65ceb2a")]
+[assembly: AssemblyCopyright("Copyright @  2020")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Settings.get_Default():ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties.Sett" +
-    "ings")]
-
-namespace ST_38ff18b938434e01b2e5d5c4d65ceb2a.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Settings.settings"
             Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
@@ -5441,13 +5408,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\Dynamiczne utworzene tabeli stage Confirmed"
+      DTS:refId="Package\Dynamiczne utworzene i zasilenie tabeli stage Confirmed"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:DTSID="{28889EBC-2F10-4DC9-86E2-A29463774F08}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Dynamiczne utworzene tabeli stage Confirmed"
+      DTS:ObjectName="Dynamiczne utworzene i zasilenie tabeli stage Confirmed"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
       DTS:ThreadHint="0">
       <DTS:Variables />
@@ -5468,17 +5435,23 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             SQLTask:ParameterDirection="Input"
             SQLTask:DataType="16"
             SQLTask:ParameterSize="200" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="@nazwa_pliku_csv"
+            SQLTask:DtsVariableName="User::confirmed_csv_file_name"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="16"
+            SQLTask:ParameterSize="200" />
         </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\Dynamiczne utworzene tabeli stage Deaths"
+      DTS:refId="Package\Dynamiczne utworzene i zasilenie tabeli stage Deaths"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:DTSID="{dc313a46-74c5-4356-842f-6849cd21aabf}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Dynamiczne utworzene tabeli stage Deaths"
+      DTS:ObjectName="Dynamiczne utworzene i zasilenie tabeli stage Deaths"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
       DTS:ThreadHint="1">
       <DTS:Variables />
@@ -5499,17 +5472,23 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             SQLTask:ParameterDirection="Input"
             SQLTask:DataType="16"
             SQLTask:ParameterSize="200" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="@nazwa_pliku_csv"
+            SQLTask:DtsVariableName="User::deaths_csv_file_name"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="16"
+            SQLTask:ParameterSize="200" />
         </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\Dynamiczne utworzene tabeli stage Recovered"
+      DTS:refId="Package\Dynamiczne utworzene i zasilenie tabeli stage Recovered"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:DTSID="{62cf79a1-7344-45db-9476-abf9ffc19694}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Dynamiczne utworzene tabeli stage Recovered"
+      DTS:ObjectName="Dynamiczne utworzene i zasilenie tabeli stage Recovered"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
       DTS:ThreadHint="2">
       <DTS:Variables />
@@ -5530,6 +5509,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             SQLTask:ParameterDirection="Input"
             SQLTask:DataType="16"
             SQLTask:ParameterSize="200" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="@nazwa_pliku_csv"
+            SQLTask:DtsVariableName="User::recovered_csv_file_name"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="16"
+            SQLTask:ParameterSize="200" />
         </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
@@ -5542,31 +5527,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:From="Package\Dane z github GET Confirmed"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
-      DTS:To="Package\Dynamiczne utworzene tabeli stage Confirmed" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
-      DTS:CreationName=""
-      DTS:DTSID="{B5C58941-5C67-4F5E-B163-879B022EB197}"
-      DTS:From="Package\Dynamiczne utworzene tabeli stage Confirmed"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 1"
-      DTS:To="Package\Bulk Insert Confirmed Stage" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 1 1]"
-      DTS:CreationName=""
-      DTS:DTSID="{e40bd783-7810-432a-b890-5e7e7067795d}"
-      DTS:From="Package\Dynamiczne utworzene tabeli stage Recovered"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 1 1"
-      DTS:To="Package\Bulk Insert Recovered Stage" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 1 2]"
-      DTS:CreationName=""
-      DTS:DTSID="{39c2274b-2c0e-4242-9031-d70f495a2300}"
-      DTS:From="Package\Dynamiczne utworzene tabeli stage Deaths"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 1 2"
-      DTS:To="Package\Bulk Insert Deaths Stage" />
+      DTS:To="Package\Dynamiczne utworzene i zasilenie tabeli stage Confirmed" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
@@ -5574,7 +5535,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:From="Package\Dane z github GET Recovered"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 2"
-      DTS:To="Package\Dynamiczne utworzene tabeli stage Recovered" />
+      DTS:To="Package\Dynamiczne utworzene i zasilenie tabeli stage Recovered" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
       DTS:CreationName=""
@@ -5582,7 +5543,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:From="Package\Dane z github GET Deaths"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
-      DTS:To="Package\Dynamiczne utworzene tabeli stage Deaths" />
+      DTS:To="Package\Dynamiczne utworzene i zasilenie tabeli stage Deaths" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -5597,121 +5558,43 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="173,58"
-          Id="Package\Bulk Insert Confirmed Stage"
-          TopLeft="154.666666666667,467.333333333332" />
-        <NodeLayout
-          Size="173,58"
-          Id="Package\Bulk Insert Deaths Stage"
-          TopLeft="743.666666666665,465.333333333332" />
-        <NodeLayout
-          Size="173,58"
-          Id="Package\Bulk Insert Recovered Stage"
-          TopLeft="431.666666666665,465.333333333332" />
-        <NodeLayout
           Size="226,42"
           Id="Package\Dane z github GET Confirmed"
-          TopLeft="130.666666666667,181.333333333333" />
+          TopLeft="156.666666666667,181.333333333333" />
         <NodeLayout
           Size="210,42"
           Id="Package\Dane z github GET Deaths"
-          TopLeft="732.666666666665,174.333333333333" />
+          TopLeft="719.666666666665,172.333333333333" />
         <NodeLayout
           Size="228,42"
           Id="Package\Dane z github GET Recovered"
-          TopLeft="405.666666666665,172.333333333333" />
+          TopLeft="431.666666666665,172.333333333333" />
         <NodeLayout
-          Size="252,42"
-          Id="Package\Dynamiczne utworzene tabeli stage Confirmed"
-          TopLeft="121.666666666667,320.333333333332" />
+          Size="229,63"
+          Id="Package\Dynamiczne utworzene i zasilenie tabeli stage Confirmed"
+          TopLeft="150.666666666667,325.333333333332" />
         <NodeLayout
-          Size="252,42"
-          Id="Package\Dynamiczne utworzene tabeli stage Deaths"
-          TopLeft="710.666666666665,318.333333333332" />
+          Size="253,61"
+          Id="Package\Dynamiczne utworzene i zasilenie tabeli stage Deaths"
+          TopLeft="697.666666666665,316.333333333332" />
         <NodeLayout
-          Size="252,42"
-          Id="Package\Dynamiczne utworzene tabeli stage Recovered"
-          TopLeft="398.666666666665,318.333333333332" />
+          Size="227,66"
+          Id="Package\Dynamiczne utworzene i zasilenie tabeli stage Recovered"
+          TopLeft="426.666666666665,318.333333333332" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="245.666666666667,223.333333333333">
+          TopLeft="267.416666666667,223.333333333333">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,97"
+              EndConnector="0,101.999999999999"
               Start="0,0"
-              End="0,89.5">
+              End="0,94.499999999999">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,89.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="244.416666666667,362.333333333332">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,105"
-              Start="0,0"
-              End="0,97.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,97.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1 1]"
-          TopLeft="521.416666666665,360.333333333332">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,105"
-              Start="0,0"
-              End="0,97.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,97.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1 2]"
-          TopLeft="833.416666666665,360.333333333332">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,105"
-              Start="0,0"
-              End="0,97.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,97.5" />
+                    End="0,94.499999999999" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5722,18 +5605,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="522.166666666665,214.333333333333">
+          TopLeft="542.916666666665,214.333333333333">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,104"
+              EndConnector="0,103.999999999999"
               Start="0,0"
-              End="0,96.5">
+              End="0,96.499999999999">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,96.5" />
+                    End="0,96.499999999999" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5744,18 +5627,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="837.166666666665,216.333333333333">
+          TopLeft="824.416666666665,214.333333333333">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,102"
+              EndConnector="0,101.999999999999"
               Start="0,0"
-              End="0,94.5">
+              End="0,94.499999999999">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,94.5" />
+                    End="0,94.499999999999" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
