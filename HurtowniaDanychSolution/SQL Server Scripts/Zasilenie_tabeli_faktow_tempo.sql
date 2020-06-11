@@ -2,6 +2,7 @@
 --ETL init 
 --********************************************************
 --czesciowe zasilenie tabeli faktow dla wszystkich kolumn
+--CZAS|GEOGRAFIA|LICZBA_ZAKAZENI_OGOLEM|LICZBA_ZGONOW_OGOLEM|LICZBA_WYLECZONYCH_OGOLEM|LICZBA_ZAKAZONYCH_NA_DZIS|NUMER_KOLEJNY_DNIA = 0
 --********************************************************
 USE CovidHurtowniaDanych
 GO
@@ -24,8 +25,8 @@ GO
 
 --***************************************
 --Nadanie numeru kolejnego dnia zakazenia 
---przejscie po kazdej geografi
 --****************************************
+
 UPDATE sf
 SET sf.NUMER_KOLEJNY_DNIA = pt.nkd
 FROM

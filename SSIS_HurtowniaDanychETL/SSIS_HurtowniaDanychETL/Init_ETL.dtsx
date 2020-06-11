@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Init_ETL"
   DTS:PackageType="5"
-  DTS:VersionBuild="102"
-  DTS:VersionGUID="{F595F080-E85B-4425-8111-4C3DEBAE0BB5}">
+  DTS:VersionBuild="103"
+  DTS:VersionGUID="{B2A969A7-6D8B-4166-A6EB-053BA568BC50}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -5578,7 +5578,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Dynamiczne utworzene i zasilenie tabeli stage Deaths"
           TopLeft="697.666666666665,316.333333333332" />
         <NodeLayout
-          Size="227,66"
+          Size="227,50"
           Id="Package\Dynamiczne utworzene i zasilenie tabeli stage Recovered"
           TopLeft="426.666666666665,318.333333333332" />
         <EdgeLayout

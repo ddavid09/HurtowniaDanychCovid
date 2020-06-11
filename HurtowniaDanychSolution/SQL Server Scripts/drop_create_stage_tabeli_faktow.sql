@@ -1,3 +1,6 @@
+USE CovidHurtowniaDanych
+GO
+
 DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
 
 CREATE TABLE [dbo].[stage_tempo_fact]
