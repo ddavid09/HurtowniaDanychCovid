@@ -1,3 +1,6 @@
+USE CovidHurtowniaDanych
+GO
+
 GO
 DROP PROCEDURE IF EXISTS dbo.utworz_tabele_stage
 GO
@@ -49,8 +52,21 @@ BULK INSERT ' + @nazwa_tabeli + '
 FROM ''C:\ssis_hd_temp\' + @nazwa_pliku_csv + '''
 WITH (FIRSTROW = 2,
     FIELDTERMINATOR = '','',
-    ROWTERMINATOR=''\n'')
-'
+    ROWTERMINATOR=''\n'')'
 
 EXEC sys.sp_executesql @bulkinsertsql
+PRINT 'PIERWSZY BULK INSERT ZALADOWAL' + CAST(@@ROWCOUNT AS varchar(50)) + 'WIERSZY'
+
+IF @@ROWCOUNT > 0
+	PRINT 'TABELA' + @nazwa_tabeli + 'ZASILONA'
+ELSE
+	SET @bulkinsertsql = N'
+	BULK INSERT ' + @nazwa_tabeli + '
+	FROM ''C:\ssis_hd_temp\' + @nazwa_pliku_csv + '''
+	WITH (FIRSTROW = 2,
+		FIELDTERMINATOR = '','',
+		ROWTERMINATOR=''0x0A'')'
+	EXEC sys.sp_executesql @bulkinsertsql
+	PRINT 'DRUGI BULK INSERT ZALADOWAL' + CAST(@@ROWCOUNT AS varchar(50)) + 'WIERSZY'
+	PRINT 'TABELA' + @nazwa_tabeli + 'ZASILONA'
 GO
