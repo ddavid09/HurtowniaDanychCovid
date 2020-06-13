@@ -1,7 +1,7 @@
 --********************************************************
---ETL init 
+--ETL
 --********************************************************
---czesciowe zasilenie tabeli faktow dla wszystkich kolumn
+--czesciowe zasilenie stage tabeli faktow kolumny:
 --CZAS|GEOGRAFIA|LICZBA_ZAKAZENI_OGOLEM|LICZBA_ZGONOW_OGOLEM|LICZBA_WYLECZONYCH_OGOLEM|LICZBA_ZAKAZONYCH_NA_DZIS|NUMER_KOLEJNY_DNIA = 0
 --********************************************************
 USE CovidHurtowniaDanych
@@ -24,9 +24,8 @@ END
 GO
 
 --***************************************
---Nadanie numeru kolejnego dnia zakazenia 
+--NUMER_KOLEJNY_DNIA
 --****************************************
-
 UPDATE sf
 SET sf.NUMER_KOLEJNY_DNIA = pt.nkd
 FROM
@@ -40,11 +39,59 @@ GROUP BY CZAS, GEOGRAFIA) AS pt
 ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
 GO
 
+--**************************
+--LICZBA_NOWYCH_ZAKAZEN_DZIS
+--**************************
+UPDATE sf
+SET sf.LICZBA_NOWYCH_ZAKAZEN_DZIS = pt.lzo - pt.zdp
+FROM
+stage_tempo_fact AS sf
+INNER JOIN 
+(SELECT CZAS, GEOGRAFIA, LICZBA_ZAKAZENI_OGOLEM AS lzo, 
+LAG(LICZBA_ZAKAZENI_OGOLEM, 1, 0) 
+OVER (PARTITION BY GEOGRAFIA ORDER BY CZAS) AS zdp
+FROM stage_tempo_fact) AS pt
+ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
+GO
+
+--**************************
+--LICZBA_NOWYCH_ZGONOW_DZIS
+--**************************
+UPDATE sf
+SET sf.LICZBA_NOWYCH_ZGONOW_DZIS = pt.lzgo - pt.zgdp
+FROM
+stage_tempo_fact AS sf
+INNER JOIN 
+(SELECT CZAS, GEOGRAFIA, LICZBA_ZGONOW_OGOLEM AS lzgo, 
+LAG(LICZBA_ZGONOW_OGOLEM, 1, 0) 
+OVER (PARTITION BY GEOGRAFIA ORDER BY CZAS) AS zgdp
+FROM stage_tempo_fact) AS pt
+ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
+GO
+
+--******************************
+--LICZBA_NOWYCH_WYLECZONYCH_DZIS
+--******************************
+UPDATE sf
+SET sf.LICZBA_NOWYCH_WYLECZONYCH_DZIS = pt.lwo - pt.wdp
+FROM
+stage_tempo_fact AS sf
+INNER JOIN 
+(SELECT CZAS, GEOGRAFIA, LICZBA_WYLECZONYCH_OGOLEM AS lwo, 
+LAG(LICZBA_WYLECZONYCH_OGOLEM, 1, 0) 
+OVER (PARTITION BY GEOGRAFIA ORDER BY CZAS) AS wdp
+FROM stage_tempo_fact) AS pt
+ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
+GO
+
+
+
 --************************************************************************************
 --Uzupelnienie liczby nowych przypadkow dla kazdego faktu (kazdego dnia w kazdym kraju)
 --************************************************************************************
 
 SELECT * FROM stage_tempo_fact
+ORDER BY GEOGRAFIA, CZAS
 
 
 UPDATE [dbo].stage_tempo_fact
