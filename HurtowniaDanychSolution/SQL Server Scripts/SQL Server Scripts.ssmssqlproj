@@ -25,6 +25,12 @@
           <AssociatedConnUserName />
           <FullPath>drop_create_stage_tabeli_faktow.sql</FullPath>
         </FileNode>
+        <FileNode Name="Procedura załadowania wymiaru geografisql.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>Procedura załadowania wymiaru geografisql.sql</FullPath>
+        </FileNode>
         <FileNode Name="SQLQuery1.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-OLH50II:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>DESKTOP-OLH50II</AssociatedConnSrvName>

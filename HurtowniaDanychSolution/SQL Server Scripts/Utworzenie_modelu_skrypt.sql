@@ -99,7 +99,7 @@ VALUES
 GO
 
 DECLARE @startdate DATE = '2020-01-22'
-DECLARE @enddaste DATE = '2021-01-22'
+DECLARE @enddaste DATE = '2025-01-22'
 
 WHILE @startdate < @enddaste
 BEGIN
@@ -244,7 +244,6 @@ GO
 --z wybranego dnia (kolumny)
 --*********************************************************************************************************************
 
-GO
 DROP PROCEDURE IF EXISTS dbo.zasil_tempo_stage_confirmed_recovered_deaths_onthatday
 GO
 
@@ -260,23 +259,15 @@ SET @date = @data;
 DECLARE @sqlText nvarchar(max)
 SET @sqlText =
 N'INSERT INTO stage_tempo_fact
-(CZAS_ID, GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS, NUMER_KOLEJNY_DNIA)
-SELECT 
-ISNULL(C.CZAS_ID, 0),
-ISNULL(G.GEOGRAFIA_ID, 0),
-ISNULL(P.CONFIRMED, 0),
-ISNULL(P.DEATHS, 0),
-ISNULL(P.RECOVERED, 0),
-ISNULL(P.INFECTED_ON_THAT_DAY, 0),
-NUMER_KOLEJNY_DNIA = 0
-FROM 
-(SELECT
-'''+ @date + ''' AS [DATE],
+(CZAS, GEOGRAFIA, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS, NUMER_KOLEJNY_DNIA)
+SELECT
+'''+ @date + ''',
 C.[Country/Region],
 CONFIRMED,
 DEATHS,
 RECOVERED,
-(CONFIRMED - (DEATHS + RECOVERED)) AS INFECTED_ON_THAT_DAY
+(CONFIRMED - (DEATHS + RECOVERED)),
+0
 FROM
 (SELECT 
 [Country/Region],
@@ -296,15 +287,19 @@ INNER JOIN
 SUM([' + @date + ']) AS DEATHS
 FROM csse_covid_19_time_series_deaths_stage
 GROUP BY [Country/Region]) AS D
-ON C.[Country/Region] = D.[Country/Region]) AS P
-INNER JOIN CZAS_DIM AS C ON P.[DATE] = C.[DATA]
-INNER JOIN GEOGRAFIA_DIM AS G ON P.[Country/Region] = G.KRAJ;'
+ON C.[Country/Region] = D.[Country/Region]'
 
-EXEC sp_executesql @sqlText;
+BEGIN TRY  
+    EXEC sp_executesql @sqlText;  
+	PRINT 'DANE PODSTAWOWE DLA DNIA: ' + @date + ' ZA?ADOWANE'
+END TRY  
+BEGIN CATCH  
+    PRINT 'BRAK DANYCH PODSTAWOWYCH Z DNIA: ' + @date
+END CATCH; 
 GO
 
 --**************************************************************************************************************************************************
---Procedura skladowana do zasilenia wymiaru geograffii
+--Procedura skladowana do zasilenia wymiaru geografii
 --**************************************************************************************************************************************************
 
 GO 
@@ -383,9 +378,7 @@ BULK INSERT [dbo].[data_country_alpha3_gdp]
 --PRINT @sqltext
 EXEC sp_executesql @sqltext
 
---***********************************************
---Utowrzenie przestrzeni stage dla wymiaru data
---***********************************************
+--Utowrzenie przestrzeni stage dla wymiaru geografii
 DROP TABLE IF EXISTS [dbo].[stage_geografia]
 
 
@@ -401,9 +394,7 @@ CREATE TABLE [dbo].[stage_geografia]
 )
 
 
---***********************************************
---Wypelnienie przestrzeni stage dla wymiaru data
---***********************************************
+--Wypelnienie przestrzeni stage dla wymiaru geografii
 INSERT INTO [dbo].[stage_geografia] (KRAJ, [ALPHA-3_CODE], PKB, KONTYNENT, POPULACJA)
 SELECT DISTINCT
 	[csse].[Country/Region] AS [KRAJ],
@@ -424,9 +415,7 @@ ON [csse].[Country/Region]=[c].[Country]
 
 UPDATE [dbo].[stage_geografia] SET KRAJ = 'Taiwan' WHERE KRAJ = 'Taiwan*'
 
---***********************************************
 --Ladowanie do wymiaru GEOGRAFIA_DIM
---***********************************************
 INSERT INTO [dbo].[GEOGRAFIA_DIM] (KONTYNENT, KRAJ, POPULACJA, PKB)
 SELECT s.KONTYNENT, s.KRAJ, s.POPULACJA, s.PKB
 FROM [dbo].[stage_geografia] AS [s]
@@ -434,18 +423,13 @@ WHERE NOT EXISTS (SELECT gd.KRAJ FROM
 				GEOGRAFIA_DIM gd WHERE 
 				gd.KRAJ = s.KRAJ)
 
---*********************************
 --Posprzatanie wykorzystanych tabel
---*********************************
 DROP TABLE IF EXISTS [dbo].[data_region_country]
 DROP TABLE IF EXISTS [dbo].[data_country_population]
 DROP TABLE IF EXISTS [dbo].[data_country_alpha3_gdp]
 DROP TABLE IF EXISTS [dbo].[stage_geografia]
 
---****************************
 --Uzupelnienie brakujacych pol
---****************************
-
 UPDATE  GEOGRAFIA_DIM SET
 KONTYNENT = (CASE
 					WHEN KRAJ = 'Burkina Faso' OR
@@ -457,7 +441,7 @@ KONTYNENT = (CASE
 						KRAJ = 'Western Sahara' THEN 'Africa'
 					WHEN KRAJ = 'Burma' OR
 						KRAJ = 'Korea South' OR
-						KRAJ = 'Taiwan*' OR
+						KRAJ = 'Taiwan' OR
 						KRAJ = 'Timor-Leste' OR
 						KRAJ = 'West Bank and Gaza' THEN 'Asia'
 					WHEN KRAJ = 'Czechia' OR
