@@ -1,6 +1,32 @@
 --********************************************************
 --ETL
 --********************************************************
+
+--*******************************
+--Przygotowanie przestrzeni stage
+--*******************************
+
+USE CovidHurtowniaDanych
+GO
+
+DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
+
+CREATE TABLE [dbo].[stage_tempo_fact]
+(
+	[FAKT_ID] [int] IDENTITY(1,1) NOT NULL,
+	[CZAS] nvarchar(50) NULL,
+	[GEOGRAFIA] nvarchar(50) NULL,
+	[LICZBA_ZAKAZENI_OGOLEM] [int] NULL,
+	[LICZBA_ZGONOW_OGOLEM] [int] NULL,
+	[LICZBA_WYLECZONYCH_OGOLEM] [int] NULL,
+	[LICZBA_NOWYCH_ZAKAZEN_DZIS] [int] NULL,
+	[LICZBA_NOWYCH_ZGONOW_DZIS] [int] NULL,
+	[LICZBA_NOWYCH_WYLECZONYCH_DZIS] [int] NULL,
+	[LICZBA_ZAKAZONYCH_NA_DZIS] [int] NULL,
+	[DYNAMIKA_ZAKAZEN] [float] NULL,
+	[NUMER_KOLEJNY_DNIA] [int] NULL
+)
+
 --czesciowe zasilenie stage tabeli faktow kolumny:
 --CZAS|GEOGRAFIA|LICZBA_ZAKAZENI_OGOLEM|LICZBA_ZGONOW_OGOLEM|LICZBA_WYLECZONYCH_OGOLEM|LICZBA_ZAKAZONYCH_NA_DZIS|NUMER_KOLEJNY_DNIA = 0
 --********************************************************
@@ -120,147 +146,7 @@ WHERE NOT EXISTS (SELECT [DATA], KRAJ FROM [dbo].TEMPO_WIRUSA_SUM ft
 				INNER JOIN CZAS_DIM cd ON ft.CZAS_ID = cd.CZAS_ID
 				INNER JOIN GEOGRAFIA_DIM gd ON ft.GEOGRAFIA_ID = gd.GEOGRAFIA_ID
 				WHERE cd.[DATA] = stf.CZAS AND gd.KRAJ = stf.GEOGRAFIA)
+GO
 
 
 
-
-
---************************************************************************************
---Uzupelnienie liczby nowych przypadkow dla kazdego faktu (kazdego dnia w kazdym kraju)
---************************************************************************************
-
-SELECT * FROM stage_tempo_fact
-ORDER BY GEOGRAFIA, CZAS
-
-SELECT CZAS, GEOGRAFIA, LICZBA_NOWYCH_ZAKAZEN_DZIS, DYNAMIKA_ZAKAZEN FROM stage_tempo_fact
-ORDER BY GEOGRAFIA, CZAS
-
-
-UPDATE [dbo].stage_tempo_fact
-SET 
-	LICZBA_NOWYCH_ZAKAZEN_DZIS = LICZBA_ZAKAZONYCH_NA_DZIS,
-	DYNAMIKA_ZAKAZEN = 0
-FROM [dbo].stage_tempo_fact sf
-INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-WHERE [DATA] = '2020-01-22'
-
-DECLARE @maxDate DATE
-
-SELECT TOP 1 @maxDate = [DATA]
-FROM [dbo].stage_tempo_fact sf
-INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-ORDER BY [DATA] DESC
-
-DECLARE @dateCoursor DATE = '2020-01-23'
-
-WHILE @dateCoursor <= @maxDate
-	BEGIN
-		DECLARE @numOfFactsThisDate int
-		SELECT @numOfFactsThisDate = COUNT(*) FROM 
-		[dbo].stage_tempo_fact sf
-		INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-		WHERE [DATA] = @dateCoursor
-
-		DECLARE @factCursor int = 0;
-
-			WHILE @factCursor < @numOfFactsThisDate
-				BEGIN
-					DECLARE @idToUpdate int;
-					DECLARE @GeographyId int;
-
-					SELECT TOP 1 @idToUpdate = FAKT_ID, @GeographyId = GEOGRAFIA_ID
-					FROM [dbo].stage_tempo_fact sf
-					INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-					WHERE [DATA] = @dateCoursor AND
-					LICZBA_NOWYCH_ZAKAZEN_DZIS IS NULL
-
-					DECLARE @ConfirmedDayBefore int;
-
-					SELECT @ConfirmedDayBefore = LICZBA_ZAKAZENI_OGOLEM 
-					FROM [dbo].stage_tempo_fact sf
-					INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-					WHERE [DATA] = DATEADD(day, -1, @dateCoursor) AND
-					GEOGRAFIA_ID = @GeographyId
-
-					UPDATE [dbo].stage_tempo_fact
-					SET LICZBA_NOWYCH_ZAKAZEN_DZIS = LICZBA_ZAKAZENI_OGOLEM - @ConfirmedDayBefore
-					WHERE FAKT_ID = @idToUpdate
-
-					SET @factCursor = @factCursor + 1
-				END
-		SET @dateCoursor = DATEADD(day, 1, @dateCoursor)
-	END
-	GO
-
---********************************************************************
---Uzupe?nienie dynamiki zakazen petla po kazdym nieuzupelnionym fakcie
---********************************************************************
-
-ALTER TABLE [dbo].stage_tempo_fact 
-ALTER COLUMN DYNAMIKA_ZAKAZEN decimal(12,4)
-
-DECLARE @numOfFacts int
-DECLARE @cursor int = 0
-
-SELECT @numOfFacts = COUNT(*) FROM [dbo].stage_tempo_fact
-
-WHILE @cursor < @numOfFacts
-	BEGIN
-		DECLARE @toUpdateId int
-		DECLARE @toUpdateData DATE
-		DECLARE @toUpdateGeoId int
-
-		SELECT TOP 1
-		@toUpdateId = FAKT_ID,
-		@toUpdateData = cd.[DATA],
-		@toUpdateGeoId = GEOGRAFIA_ID
-		FROM 
-		[dbo].stage_tempo_fact sf
-		INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-		WHERE 
-		DYNAMIKA_ZAKAZEN IS NULL AND
-		[DATA] > '2020-02-22'
-
-		DECLARE @newCasesDayBefore int
-
-		SELECT @newCasesDayBefore = LICZBA_NOWYCH_ZAKAZEN_DZIS
-		FROM [dbo].stage_tempo_fact sf
-		INNER JOIN CZAS_DIM cd ON sf.CZAS_ID = cd.CZAS_ID
-		WHERE 
-		[DATA] = DATEADD(day, -1, @toUpdateData) AND
-		GEOGRAFIA_ID = @toUpdateGeoId
-
-		IF @newCasesDayBefore > 0
-			UPDATE [dbo].stage_tempo_fact 
-			SET DYNAMIKA_ZAKAZEN = 
-			CAST(CAST(LICZBA_NOWYCH_ZAKAZEN_DZIS AS decimal(12,5))/@newCasesDayBefore AS decimal(12,4))
-			WHERE FAKT_ID = @toUpdateId
-		ELSE
-			UPDATE [dbo].stage_tempo_fact 
-			SET DYNAMIKA_ZAKAZEN = 0
-			WHERE FAKT_ID = @toUpdateId
-			SET @cursor = @cursor + 1
-	END
-
---************************************
---zaladowanie danych stage->tab faktow
---************************************
-
-ALTER TABLE [dbo].TEMPO_WIRUSA_SUM
-ALTER COLUMN DYNAMIKA_ZAKAZEN decimal(12,4)
-
-SET IDENTITY_INSERT [dbo].TEMPO_WIRUSA_SUM OFF
-
-INSERT INTO [dbo].TEMPO_WIRUSA_SUM
-(CZAS_ID, GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM , LICZBA_WYLECZONYCH_OGOLEM,
-LICZBA_NOWYCH_ZAKAZEN_DZIS, LICZBA_ZAKAZONYCH_NA_DZIS, DYNAMIKA_ZAKAZEN, NUMER_KOLEJNY_DNIA)
-SELECT 
-cd.CZAS_ID, gd.GEOGRAFIA_ID, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM,
-LICZBA_NOWYCH_ZAKAZEN_DZIS, LICZBA_ZAKAZONYCH_NA_DZIS, DYNAMIKA_ZAKAZEN, NUMER_KOLEJNY_DNIA
-FROM [dbo].stage_tempo_fact stf
-INNER JOIN CZAS_DIM cd ON CAST(stf.CZAS AS DATE) = cd.[DATA]
-INNER JOIN GEOGRAFIA_DIM gd ON stf.GEOGRAFIA = gd.KRAJ
-WHERE NOT EXISTS (SELECT [DATA], KRAJ FROM [dbo].TEMPO_WIRUSA_SUM ft
-				INNER JOIN CZAS_DIM cd ON ft.CZAS_ID = cd.CZAS_ID
-				INNER JOIN GEOGRAFIA_DIM gd ON ft.GEOGRAFIA_ID = gd.GEOGRAFIA_ID
-				WHERE cd.[DATA] = stf.CZAS AND gd.KRAJ = stf.GEOGRAFIA)
