@@ -84,13 +84,34 @@ FROM stage_tempo_fact) AS pt
 ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
 GO
 
+--****************
+--DYNAMIKA_ZAKAZEN
+--****************
+ALTER TABLE [dbo].stage_tempo_fact 
+ALTER COLUMN DYNAMIKA_ZAKAZEN decimal(12,4)
+
+UPDATE sf
+SET sf.DYNAMIKA_ZAKAZEN = CASE WHEN pt.lnzdp <> 0 THEN
+CAST(CAST(pt.lnzd AS decimal(12,5))/pt.lnzdp AS decimal(12,4))
+ELSE 0 END
+FROM
+stage_tempo_fact AS sf
+INNER JOIN 
+(SELECT CZAS, GEOGRAFIA, LICZBA_NOWYCH_ZAKAZEN_DZIS AS lnzd, 
+LAG(LICZBA_NOWYCH_ZAKAZEN_DZIS, 1, 0) 
+OVER (PARTITION BY GEOGRAFIA ORDER BY CZAS) AS lnzdp
+FROM stage_tempo_fact) AS pt
+ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
+GO
+
+
 
 
 --************************************************************************************
 --Uzupelnienie liczby nowych przypadkow dla kazdego faktu (kazdego dnia w kazdym kraju)
 --************************************************************************************
 
-SELECT * FROM stage_tempo_fact
+SELECT CZAS, GEOGRAFIA, LICZBA_NOWYCH_ZAKAZEN_DZIS, DYNAMIKA_ZAKAZEN FROM stage_tempo_fact
 ORDER BY GEOGRAFIA, CZAS
 
 
