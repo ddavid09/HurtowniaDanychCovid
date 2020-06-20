@@ -3,9 +3,7 @@ Dominik DAWIDZIAK I7B1S1
 Patryk BARCZAK I7B1S1
 
 ### Skrypty SQL:
-* [Tworzenie Modelu](HurtowniaDanychSolution/SQL Server Scripts/Utworzenie_modelu_skrypt.sql)
-* [Zasilanie tabeli faktow TEMPO](HurtowniaDanychSolution/SQL Server Scripts/Zasilenie_tabeli_faktow_tempo.sql)
-* [Zasilanie tabeli faktow ZDARZENIE](HurtowniaDanychSolution/SQL Server Scripts/Zaladowanie_danych_pacjentow.sql)
+* [Skrypty](HurtowniaDanychSolution/SQL Server Scripts)
 
 ### Projekt SSIS
 * [SSIS Projekt](https://github.com/ddavid09/HurtowniaDanychCovid/tree/master/SSIS_HurtowniaDanychETL)
