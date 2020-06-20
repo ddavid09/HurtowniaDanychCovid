@@ -60,7 +60,7 @@ CREATE TABLE [dbo].[PACJENT_DIM]
 	[PACJENT_ID] [int] IDENTITY(1,1) NOT NULL,
 	[GEOGRAFIA_ID] [int] NOT NULL,
 	[WIEK] [int] NOT NULL,
-	[PLEC] [int] NOT NULL
+	[PLEC] [VARCHAR](10) NOT NULL
 )
 GO
 
@@ -259,7 +259,8 @@ SET @date = @data;
 DECLARE @sqlText nvarchar(max)
 SET @sqlText =
 N'INSERT INTO stage_tempo_fact
-(CZAS, GEOGRAFIA, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS, NUMER_KOLEJNY_DNIA)
+(CZAS, GEOGRAFIA, LICZBA_ZAKAZENI_OGOLEM, LICZBA_ZGONOW_OGOLEM, 
+LICZBA_WYLECZONYCH_OGOLEM, LICZBA_ZAKAZONYCH_NA_DZIS, NUMER_KOLEJNY_DNIA)
 SELECT
 '''+ @date + ''',
 C.[Country/Region],
@@ -291,7 +292,7 @@ ON C.[Country/Region] = D.[Country/Region]'
 
 BEGIN TRY  
     EXEC sp_executesql @sqlText;  
-	PRINT 'DANE PODSTAWOWE DLA DNIA: ' + @date + ' ZA?ADOWANE'
+	PRINT 'DANE PODSTAWOWE DLA DNIA: ' + @date + ' ZALADOWANE'
 END TRY  
 BEGIN CATCH  
     PRINT 'BRAK DANYCH PODSTAWOWYCH Z DNIA: ' + @date
@@ -311,9 +312,6 @@ CREATE PROC dbo.zasil_wymiar_geografia
 @hurtowniaPath nvarchar(max)
 
 AS
-
---DECLARE @hurtowniaPath nvarchar(max)
---SET @hurtowniaPath = N'C:\Users\ddawi\Google-cloud\02-Studia\16-Sem6-2020-03-2020-06\HD\Projekt\HurtowniaDanychCovid'
 
 DROP TABLE IF EXISTS [dbo].[data_region_country]
 DROP TABLE IF EXISTS [dbo].[data_country_population]
@@ -375,7 +373,6 @@ BULK INSERT [dbo].[data_country_alpha3_gdp]
     TABLOCK
     )'
 
---PRINT @sqltext
 EXEC sp_executesql @sqltext
 
 --Utowrzenie przestrzeni stage dla wymiaru geografii
@@ -593,4 +590,149 @@ PKB = '26910000000'
 WHERE KRAJ = 'Yemen'
 GO
 
---*****************************************************************************************************************************************************************************************
+UPDATE GEOGRAFIA_DIM SET
+KONTYNENT = 'Australia'
+WHERE KONTYNENT = 'Oceania'
+GO
+
+
+--**************************************************************************************************************************************
+--Utworzenie prcedury skladowanej do tworzenia nowego zakazenia (nowy losowy pacjent + nowe zakazenie dla zadanej geografi i daty po ID)
+--**************************************************************************************************************************************
+CREATE PROCEDURE UtworzNowoZakazonegoPacjenta
+
+@geoId int,
+@dataId int
+
+AS
+
+DECLARE @randPacjentId int
+DECLARE @randWiek int 
+DECLARE @randPlec varchar(9)
+DECLARE @typZdarzeniaId int
+
+IF CAST(ROUND(RAND(), 0) AS INT) = 1 
+    BEGIN
+    SET @randPlec = 'mezczyzna'
+    PRINT 'Wylosowano: ' + @randPlec
+    END
+ELSE
+    BEGIN
+    SET @randPlec = 'kobieta'
+    PRINT 'Wylosowano: ' + @randPlec
+    END
+
+SET @randWiek = CAST(RAND()*(100-1)+1 AS INT)
+PRINT 'WIEK: ' + CAST(@randWiek AS varchar(3))
+
+INSERT INTO PACJENT_DIM (GEOGRAFIA_ID, WIEK, PLEC)
+VALUES (
+    @geoId,
+    @randWiek,
+    @randPlec
+)
+SET @randPacjentId = @@IDENTITY
+
+SELECT @typZdarzeniaId = TYP_ZDARZENIA_ID FROM TYP_ZDARZENIA_DIM
+WHERE NAZWA_ZDARZENIA = 'zakazenie'
+
+INSERT INTO ZDARZENIE_PACJENT_DET (PACJENT_ID, TYP_ZDARZENIA_ID, CZAS_ID)
+VALUES (
+    @randPacjentId,
+    @typZdarzeniaId,
+    @dataId
+)
+GO
+
+--************************************************************************************************************
+--Utworzenie prcedury skladowanej do tworzenia zdarzen 'nowe wyzdrowienia' dla zadanej geografi i daty po ID
+--************************************************************************************************************
+CREATE PROCEDURE NoweWyzdrowienia
+
+@geoId int,
+@dataId int,
+@numToProcess int
+
+AS
+
+DECLARE @sqlText nvarchar(max)
+
+SET @sqlText = N'
+INSERT INTO ZDARZENIE_PACJENT_DET (PACJENT_ID, TYP_ZDARZENIA_ID, CZAS_ID)
+SELECT TOP ' + CAST(@numToProcess AS varchar(20)) + ' 
+pd.PACJENT_ID, TYP_ZDARZENIA_ID = ''2'', CZAS_ID = ' 
++ CAST(@dataId AS varchar(20)) + ' FROM ZDARZENIE_PACJENT_DET pd
+INNER JOIN PACJENT_DIM tzd ON pd.PACJENT_ID = tzd.PACJENT_ID
+WHERE tzd.GEOGRAFIA_ID = ' + CAST(@geoId AS varchar(20)) + ' AND
+pd.CZAS_ID <= ' + CAST(@dataId AS varchar(20)) + ' AND 
+pd.TYP_ZDARZENIA_ID = ''1'' AND
+NOT EXISTS (
+SELECT PACJENT_ID FROM ZDARZENIE_PACJENT_DET zp
+WHERE (TYP_ZDARZENIA_ID = ''2'' OR TYP_ZDARZENIA_ID = ''3'') AND
+pd.PACJENT_ID = zp.PACJENT_ID)
+ORDER BY NEWID()'
+
+EXEC sp_executesql @sqlText;
+PRINT 'Uzdrowiono ' + CAST(@@ROWCOUNT AS varchar(20)) + ' / ' + 
+CAST(@numToProcess AS varchar(20)) + ' pacjentow w geo: ' + 
+CAST(@geoId AS varchar(20)) + ' czas: ' + CAST(@dataId AS varchar(20))
+IF @@ROWCOUNT < @numToProcess
+	BEGIN
+	PRINT 'NIEZGODNOSC!'
+	END
+GO
+
+--******************************************************************************************************
+--Utworzenie prcedury skladowanej do tworzenia zdarzen 'nowe smierci' dla zadanej geografi i daty po ID
+--******************************************************************************************************
+CREATE PROCEDURE NoweSmierci
+
+@geoId int,
+@dataId int,
+@numToProcess int
+
+AS
+
+DECLARE @sqlText nvarchar(max)
+
+SET @sqlText = N'
+INSERT INTO ZDARZENIE_PACJENT_DET (PACJENT_ID, TYP_ZDARZENIA_ID, CZAS_ID)
+SELECT TOP ' + CAST(@numToProcess AS varchar(20)) + ' pd.PACJENT_ID,
+TYP_ZDARZENIA_ID = ''3'', CZAS_ID = ' + CAST(@dataId AS varchar(20)) +
+' FROM ZDARZENIE_PACJENT_DET pd
+INNER JOIN PACJENT_DIM tzd ON pd.PACJENT_ID = tzd.PACJENT_ID
+WHERE tzd.GEOGRAFIA_ID = ' + CAST(@geoId AS varchar(20)) + ' AND
+pd.CZAS_ID <= ' + CAST(@dataId AS varchar(20)) + ' AND 
+pd.TYP_ZDARZENIA_ID = ''1'' AND
+NOT EXISTS (
+SELECT PACJENT_ID FROM ZDARZENIE_PACJENT_DET zp
+WHERE (TYP_ZDARZENIA_ID = ''2'' OR TYP_ZDARZENIA_ID = ''3'') AND
+pd.PACJENT_ID = zp.PACJENT_ID)
+ORDER BY NEWID()'
+
+EXEC sp_executesql @sqlText;
+PRINT 'Usmiercono ' + CAST(@numToProcess AS varchar(20)) + ' pacjentow 
+w geo: ' + CAST(@geoId AS varchar(20)) + ' czas: ' + CAST(@dataId AS varchar(20))
+GO
+
+--***********************************************************
+--Przygotowanie tabeli stage do zasilania tabeli faktow tempo
+--***********************************************************
+DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
+
+CREATE TABLE [dbo].[stage_tempo_fact]
+(
+	[FAKT_ID] [int] IDENTITY(1,1) NOT NULL,
+	[CZAS] nvarchar(50) NULL,
+	[GEOGRAFIA] nvarchar(50) NULL,
+	[LICZBA_ZAKAZENI_OGOLEM] [int] NULL,
+	[LICZBA_ZGONOW_OGOLEM] [int] NULL,
+	[LICZBA_WYLECZONYCH_OGOLEM] [int] NULL,
+	[LICZBA_NOWYCH_ZAKAZEN_DZIS] [int] NULL,
+	[LICZBA_NOWYCH_ZGONOW_DZIS] [int] NULL,
+	[LICZBA_NOWYCH_WYLECZONYCH_DZIS] [int] NULL,
+	[LICZBA_ZAKAZONYCH_NA_DZIS] [int] NULL,
+	[DYNAMIKA_ZAKAZEN] [float] NULL,
+	[NUMER_KOLEJNY_DNIA] [int] NULL
+)
+GO

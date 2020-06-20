@@ -1,31 +1,8 @@
 --********************************************************
 --ETL
 --********************************************************
-
---*******************************
---Przygotowanie przestrzeni stage
---*******************************
-
 USE CovidHurtowniaDanych
 GO
-
-DROP TABLE IF EXISTS [dbo].[stage_tempo_fact]
-
-CREATE TABLE [dbo].[stage_tempo_fact]
-(
-	[FAKT_ID] [int] IDENTITY(1,1) NOT NULL,
-	[CZAS] nvarchar(50) NULL,
-	[GEOGRAFIA] nvarchar(50) NULL,
-	[LICZBA_ZAKAZENI_OGOLEM] [int] NULL,
-	[LICZBA_ZGONOW_OGOLEM] [int] NULL,
-	[LICZBA_WYLECZONYCH_OGOLEM] [int] NULL,
-	[LICZBA_NOWYCH_ZAKAZEN_DZIS] [int] NULL,
-	[LICZBA_NOWYCH_ZGONOW_DZIS] [int] NULL,
-	[LICZBA_NOWYCH_WYLECZONYCH_DZIS] [int] NULL,
-	[LICZBA_ZAKAZONYCH_NA_DZIS] [int] NULL,
-	[DYNAMIKA_ZAKAZEN] [float] NULL,
-	[NUMER_KOLEJNY_DNIA] [int] NULL
-)
 
 --czesciowe zasilenie stage tabeli faktow kolumny:
 --CZAS|GEOGRAFIA|LICZBA_ZAKAZENI_OGOLEM|LICZBA_ZGONOW_OGOLEM|LICZBA_WYLECZONYCH_OGOLEM|LICZBA_ZAKAZONYCH_NA_DZIS|NUMER_KOLEJNY_DNIA = 0
@@ -48,6 +25,9 @@ BEGIN
 	SET @startDate = DATEADD(day, 1, @startDate)
 END
 GO
+
+--poprawa nazwy Taiwanu w nowozaladowanych rekordach
+UPDATE [dbo].[stage_tempo_fact] SET geografia = 'Taiwan' WHERE GEOGRAFIA = 'Taiwan*'
 
 --***************************************
 --NUMER_KOLEJNY_DNIA
@@ -80,6 +60,10 @@ FROM stage_tempo_fact) AS pt
 ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
 GO
 
+UPDATE stage_tempo_fact
+SET LICZBA_NOWYCH_ZAKAZEN_DZIS = 0
+WHERE LICZBA_NOWYCH_ZAKAZEN_DZIS < 0
+GO
 --**************************
 --LICZBA_NOWYCH_ZGONOW_DZIS
 --**************************
@@ -95,6 +79,10 @@ FROM stage_tempo_fact) AS pt
 ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
 GO
 
+UPDATE stage_tempo_fact
+SET LICZBA_NOWYCH_ZGONOW_DZIS = 0
+WHERE LICZBA_NOWYCH_ZGONOW_DZIS < 0
+GO
 --******************************
 --LICZBA_NOWYCH_WYLECZONYCH_DZIS
 --******************************
@@ -110,6 +98,10 @@ FROM stage_tempo_fact) AS pt
 ON sf.CZAS = pt.CZAS AND sf.GEOGRAFIA = pt.GEOGRAFIA
 GO
 
+UPDATE stage_tempo_fact
+SET LICZBA_NOWYCH_WYLECZONYCH_DZIS = 0
+WHERE LICZBA_NOWYCH_WYLECZONYCH_DZIS < 0
+GO
 --****************
 --DYNAMIKA_ZAKAZEN
 --****************
@@ -147,6 +139,8 @@ WHERE NOT EXISTS (SELECT [DATA], KRAJ FROM [dbo].TEMPO_WIRUSA_SUM ft
 				INNER JOIN GEOGRAFIA_DIM gd ON ft.GEOGRAFIA_ID = gd.GEOGRAFIA_ID
 				WHERE cd.[DATA] = stf.CZAS AND gd.KRAJ = stf.GEOGRAFIA)
 GO
+
+
 
 
 
