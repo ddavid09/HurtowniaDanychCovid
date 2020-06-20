@@ -1,0 +1,45 @@
+﻿<Cube xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:ddl200="http://schemas.microsoft.com/analysisservices/2010/engine/200" xmlns:ddl200_200="http://schemas.microsoft.com/analysisservices/2010/engine/200/200" xmlns:ddl300="http://schemas.microsoft.com/analysisservices/2011/engine/300" xmlns:ddl300_300="http://schemas.microsoft.com/analysisservices/2011/engine/300/300" xmlns:ddl400="http://schemas.microsoft.com/analysisservices/2012/engine/400" xmlns:ddl400_400="http://schemas.microsoft.com/analysisservices/2012/engine/400/400" xmlns:ddl500="http://schemas.microsoft.com/analysisservices/2013/engine/500" xmlns:ddl500_500="http://schemas.microsoft.com/analysisservices/2013/engine/500/500" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0" dwd:design-time-name="6486e662-6e15-442c-895b-427f24cdc000" xmlns="http://schemas.microsoft.com/analysisservices/2003/engine">
+  <ID>Covid Hurtownia Danych all</ID>
+  <MeasureGroups>
+    <MeasureGroup>
+      <ID>TEMPO WIRUSA SUM</ID>
+      <Partitions>
+        <Partition dwd:design-time-name="2236dd32-1fb7-46e8-b5eb-35ecd3426ad8">
+          <ID>TEMPO WIRUSA SUM</ID>
+          <Name>TEMPO WIRUSA SUM</Name>
+          <CreatedTimestamp>0001-01-01T00:00:00Z</CreatedTimestamp>
+          <LastSchemaUpdate>0001-01-01T00:00:00Z</LastSchemaUpdate>
+          <LastProcessed>0001-01-01T00:00:00Z</LastProcessed>
+          <State>Unprocessed</State>
+          <Source xsi:type="DsvTableBinding" dwd:design-time-name="40500618-9122-454b-adce-d83e11be11b8">
+            <DataSourceViewID>Covid Hurtownia Danych</DataSourceViewID>
+            <TableID>dbo_TEMPO_WIRUSA_SUM</TableID>
+          </Source>
+          <StorageMode>Molap</StorageMode>
+          <CurrentStorageMode>Molap</CurrentStorageMode>
+          <ProcessingMode>Regular</ProcessingMode>
+        </Partition>
+      </Partitions>
+    </MeasureGroup>
+    <MeasureGroup>
+      <ID>ZDARZENIE PACJENT DET</ID>
+      <Partitions>
+        <Partition dwd:design-time-name="7d4e6f68-c31a-4434-9f39-3eee4e44de44">
+          <ID>ZDARZENIE PACJENT DET</ID>
+          <Name>ZDARZENIE PACJENT DET</Name>
+          <CreatedTimestamp>0001-01-01T00:00:00Z</CreatedTimestamp>
+          <LastSchemaUpdate>0001-01-01T00:00:00Z</LastSchemaUpdate>
+          <LastProcessed>0001-01-01T00:00:00Z</LastProcessed>
+          <State>Unprocessed</State>
+          <Source xsi:type="DsvTableBinding" dwd:design-time-name="21855b68-8ccd-42c4-8d91-a8f628fb955d">
+            <DataSourceViewID>Covid Hurtownia Danych</DataSourceViewID>
+            <TableID>dbo_ZDARZENIE_PACJENT_DET</TableID>
+          </Source>
+          <StorageMode>Molap</StorageMode>
+          <CurrentStorageMode>Molap</CurrentStorageMode>
+          <ProcessingMode>Regular</ProcessingMode>
+        </Partition>
+      </Partitions>
+    </MeasureGroup>
+  </MeasureGroups>
+</Cube>

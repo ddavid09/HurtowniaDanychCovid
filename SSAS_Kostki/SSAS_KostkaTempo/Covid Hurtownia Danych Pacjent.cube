@@ -1,0 +1,199 @@
+﻿<Cube xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:ddl200="http://schemas.microsoft.com/analysisservices/2010/engine/200" xmlns:ddl200_200="http://schemas.microsoft.com/analysisservices/2010/engine/200/200" xmlns:ddl300="http://schemas.microsoft.com/analysisservices/2011/engine/300" xmlns:ddl300_300="http://schemas.microsoft.com/analysisservices/2011/engine/300/300" xmlns:ddl400="http://schemas.microsoft.com/analysisservices/2012/engine/400" xmlns:ddl400_400="http://schemas.microsoft.com/analysisservices/2012/engine/400/400" xmlns:ddl500="http://schemas.microsoft.com/analysisservices/2013/engine/500" xmlns:ddl500_500="http://schemas.microsoft.com/analysisservices/2013/engine/500/500" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0" dwd:design-time-name="d8c8fdd3-4fd8-40cf-a18e-5fa7b76e433b" xmlns="http://schemas.microsoft.com/analysisservices/2003/engine">
+  <ID>Covid Hurtownia Danych Pacjent</ID>
+  <Name>Covid Hurtownia Danych Pacjent</Name>
+  <CreatedTimestamp>0001-01-01T00:00:00Z</CreatedTimestamp>
+  <LastSchemaUpdate>0001-01-01T00:00:00Z</LastSchemaUpdate>
+  <Annotations>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramLayout</Name>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:ShowFriendlyNames</Name>
+      <Value>true</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:ShowRelationshipNames</Name>
+      <Value>false</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:UseDiagramDefaultLayout</Name>
+      <Value>true</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramViewPortLeft</Name>
+      <Value>0</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramViewPortTop</Name>
+      <Value>0</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramBoundingLeft</Name>
+      <Value>0</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramBoundingTop</Name>
+      <Value>0</Value>
+    </Annotation>
+    <Annotation>
+      <Name>http://schemas.microsoft.com/DataWarehouse/Designer/1.0:DiagramZoom</Name>
+      <Value>100</Value>
+    </Annotation>
+  </Annotations>
+  <LastProcessed>0001-01-01T00:00:00Z</LastProcessed>
+  <State>Unprocessed</State>
+  <Dimensions>
+    <Dimension dwd:design-time-name="b06a13b8-be9a-4269-bf1e-5f372c51660f">
+      <ID>TYP ZDARZENIA DIM</ID>
+      <Name>TYP ZDARZENIA DIM</Name>
+      <DimensionID>TYP ZDARZENIA DIM</DimensionID>
+      <Attributes>
+        <Attribute dwd:design-time-name="d1b1ff06-4cae-4928-b757-ec8160570340">
+          <AttributeID>TYP ZDARZENIA ID</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="3fc1c5a1-2c5a-4ce3-99cb-b173cd6e302b">
+          <AttributeID>NAZWA ZDARZENIA</AttributeID>
+        </Attribute>
+      </Attributes>
+    </Dimension>
+    <Dimension dwd:design-time-name="32ff05c9-74fa-4fc0-af4c-fc30a307475f">
+      <ID>PACJENT DIM</ID>
+      <Name>PACJENT DIM</Name>
+      <DimensionID>PACJENT DIM</DimensionID>
+      <Attributes>
+        <Attribute dwd:design-time-name="dd6240f8-77f8-4067-b93a-92e5849c6272">
+          <AttributeID>PACJENT ID</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="b48625ed-b904-45e1-ab84-71f1f3a5fd26">
+          <AttributeID>WIEK</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="90541ee5-04c7-4591-b0ae-f3d2061af77b">
+          <AttributeID>PLEC</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="23ee7335-ed6e-481d-8e48-0e40f2870e04">
+          <AttributeID>GEOGRAFIA ID</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="e5f63149-66cc-417a-98b8-2bbac9d5f8f8">
+          <AttributeID>KONTYNENT</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="b4949f60-0312-4da0-b2b2-c209196aa450">
+          <AttributeID>KRAJ</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="60a96eef-8996-4bc2-bd60-85f126941908">
+          <AttributeID>POPULACJA</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="69decb82-e678-46a6-9646-5faddec17cbe">
+          <AttributeID>PKB</AttributeID>
+        </Attribute>
+      </Attributes>
+    </Dimension>
+    <Dimension dwd:design-time-name="a64a52f8-004c-4f07-90b9-410d84c746f0">
+      <ID>CZAS DIM</ID>
+      <Name>CZAS DIM</Name>
+      <DimensionID>CZAS DIM</DimensionID>
+      <Attributes>
+        <Attribute dwd:design-time-name="934e834e-2be4-4509-b767-28fea6c0f8d5">
+          <AttributeID>CZAS ID</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="a0eca594-2016-4290-826b-a667f63b32b8">
+          <AttributeID>DATA</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="d52cf766-9f5f-4f40-bdf2-88d36995144f">
+          <AttributeID>DZIEN</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="380e1fcb-b652-475a-aed2-3bfa0f305d02">
+          <AttributeID>MIESIAC</AttributeID>
+        </Attribute>
+        <Attribute dwd:design-time-name="d27f936f-0c35-4c7e-8670-e3780b6eef12">
+          <AttributeID>ROK</AttributeID>
+        </Attribute>
+      </Attributes>
+    </Dimension>
+  </Dimensions>
+  <MeasureGroups>
+    <MeasureGroup dwd:design-time-name="8890e3fa-930f-4d54-8728-9c85a51461be">
+      <ID>ZDARZENIE PACJENT DET</ID>
+      <Name>ZDARZENIE PACJENT DET</Name>
+      <CreatedTimestamp>0001-01-01T00:00:00Z</CreatedTimestamp>
+      <LastSchemaUpdate>0001-01-01T00:00:00Z</LastSchemaUpdate>
+      <LastProcessed>0001-01-01T00:00:00Z</LastProcessed>
+      <State>Unprocessed</State>
+      <Measures>
+        <Measure dwd:design-time-name="1ca67ff0-8b44-452c-a6b1-8ab0771c1889">
+          <ID>ZDARZENIE PACJENT DET Count</ID>
+          <Name>ZDARZENIE PACJENT DET Count</Name>
+          <AggregateFunction>Count</AggregateFunction>
+          <Source dwd:design-time-name="085a04a1-540e-4ec9-8711-f07a61dfe899">
+            <DataType>Integer</DataType>
+            <DataSize>4</DataSize>
+            <Source xsi:type="RowBinding" dwd:design-time-name="91ddb25e-5f09-4a40-a6d2-a035b2c33ad7">
+              <TableID>dbo_ZDARZENIE_PACJENT_DET</TableID>
+            </Source>
+          </Source>
+        </Measure>
+      </Measures>
+      <StorageMode>Molap</StorageMode>
+      <ProcessingMode>Regular</ProcessingMode>
+      <Dimensions>
+        <Dimension xsi:type="RegularMeasureGroupDimension" dwd:design-time-name="0af342ba-bed7-464c-af57-d0a70e841e77">
+          <CubeDimensionID>TYP ZDARZENIA DIM</CubeDimensionID>
+          <Attributes>
+            <Attribute dwd:design-time-name="7545bd7f-49df-4cd7-8ba9-68b1d4f697e6">
+              <AttributeID>TYP ZDARZENIA ID</AttributeID>
+              <KeyColumns>
+                <KeyColumn dwd:design-time-name="1deace13-e8a3-4829-8bd0-f207005ce2ad">
+                  <DataType>Integer</DataType>
+                  <Source xsi:type="ColumnBinding" dwd:design-time-name="82a824c1-c98f-4907-a12c-e7d506813da9">
+                    <TableID>dbo_ZDARZENIE_PACJENT_DET</TableID>
+                    <ColumnID>TYP_ZDARZENIA_ID</ColumnID>
+                  </Source>
+                </KeyColumn>
+              </KeyColumns>
+              <Type>Granularity</Type>
+            </Attribute>
+          </Attributes>
+        </Dimension>
+        <Dimension xsi:type="RegularMeasureGroupDimension" dwd:design-time-name="b113b86a-f3d5-45b9-9d43-8e0867fad39d">
+          <CubeDimensionID>PACJENT DIM</CubeDimensionID>
+          <Attributes>
+            <Attribute dwd:design-time-name="1795537f-6ad9-4716-a9c5-1a69ae888992">
+              <AttributeID>PACJENT ID</AttributeID>
+              <KeyColumns>
+                <KeyColumn dwd:design-time-name="36f86dc9-5f89-4e23-9a3d-832fcf54a910">
+                  <DataType>Integer</DataType>
+                  <Source xsi:type="ColumnBinding" dwd:design-time-name="6fda52d8-1c3c-4b1a-8bf1-49f28900edcf">
+                    <TableID>dbo_ZDARZENIE_PACJENT_DET</TableID>
+                    <ColumnID>PACJENT_ID</ColumnID>
+                  </Source>
+                </KeyColumn>
+              </KeyColumns>
+              <Type>Granularity</Type>
+            </Attribute>
+          </Attributes>
+        </Dimension>
+        <Dimension xsi:type="RegularMeasureGroupDimension" dwd:design-time-name="639e09fc-511a-4055-b263-0fd2c847d1a9">
+          <CubeDimensionID>CZAS DIM</CubeDimensionID>
+          <Attributes>
+            <Attribute dwd:design-time-name="efe303dd-bd4b-457b-8966-3b88a001a285">
+              <AttributeID>CZAS ID</AttributeID>
+              <KeyColumns>
+                <KeyColumn dwd:design-time-name="6ef2e938-8025-4d24-9a53-a8b0fadc5910">
+                  <DataType>Integer</DataType>
+                  <Source xsi:type="ColumnBinding" dwd:design-time-name="78a69cf3-f731-48e4-9465-033d618017bd">
+                    <TableID>dbo_ZDARZENIE_PACJENT_DET</TableID>
+                    <ColumnID>CZAS_ID</ColumnID>
+                  </Source>
+                </KeyColumn>
+              </KeyColumns>
+              <Type>Granularity</Type>
+            </Attribute>
+          </Attributes>
+        </Dimension>
+      </Dimensions>
+      <Partitions />
+    </MeasureGroup>
+  </MeasureGroups>
+  <Source dwd:design-time-name="7056c9d9-1ba3-4d7d-9351-9dc46a466d96">
+    <DataSourceViewID>Covid Hurtownia Danych</DataSourceViewID>
+  </Source>
+</Cube>

@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "SSAS_KostkaTempo", "SSAS_KostkaTempo\SSAS_KostkaTempo.dwproj", "{38A9D644-3E37-47E1-9E76-5B6538ABDC78}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38A9D644-3E37-47E1-9E76-5B6538ABDC78}.Development|Default.ActiveCfg = Development
+		{38A9D644-3E37-47E1-9E76-5B6538ABDC78}.Development|Default.Build.0 = Development
+		{38A9D644-3E37-47E1-9E76-5B6538ABDC78}.Development|Default.Deploy.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D79E19AC-D5BE-4272-8B5E-CF94A65C41E2}
+	EndGlobalSection
+EndGlobal
