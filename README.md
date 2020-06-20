@@ -3,7 +3,7 @@ Dominik DAWIDZIAK I7B1S1
 Patryk BARCZAK I7B1S1
 
 ### Skrypty SQL:
-* [Skrypty](HurtowniaDanychSolution/SQL Server Scripts)
+* [Skrypty](https://github.com/ddavid09/HurtowniaDanychCovid/tree/master/HurtowniaDanychSolution/SQL%20Server%20Scripts)
 
 ### Projekt SSIS
 * [SSIS Projekt](https://github.com/ddavid09/HurtowniaDanychCovid/tree/master/SSIS_HurtowniaDanychETL)
