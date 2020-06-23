@@ -14,7 +14,10 @@ DECLARE @startDate DATE
 DECLARE @todayDate DATE = GETDATE()
 
 IF (SELECT COUNT(*) FROM stage_tempo_fact) > 0
+	BEGIN
 	SELECT @startDate = MAX(CAST([CZAS] AS DATE)) FROM stage_tempo_fact 
+	SET @startDate = DATEADD(DAY, 1, @startDate)
+	END
 ELSE
 	SET @startDate = '2020-01-22'
 PRINT 'Ostanie dane w przestrzeni stage z: ' + CAST(@startDate AS varchar(50))
